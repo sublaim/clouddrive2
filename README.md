@@ -114,7 +114,7 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
  
 cd2安装在了哪里?   
 > docker默认挂载点在 /CloudNAS  
-> 安卓默认安装在/data/data/com.termux/files/home/clouddrive/
+> 安卓默认安装在/data/data/com.termux/files/home/clouddrive/  
 > 其它平台默认安装在 /opt/clouddrive/  
 
 ### 安装问题
@@ -122,8 +122,11 @@ cd2安装在了哪里?
 > 重启「终端」  
 
 ### 安装后问题
-登录一直提示连接超时
+登录一直提示连接超时  
 > 用「卸载命令」再重装
+
+为何挂载后 Emby/Jellyfin 看不到这个挂载目录  
+> 在 Emby/Jellyfin 的 docker run 命令中加入 -v /CloudNAS:/CloudNAS 将目录挂载到 Emby/Jellyfin 容器中的  
 
 ### 安卓问题
 为什么 termux 无法挂载网盘到本地？  
