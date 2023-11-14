@@ -137,6 +137,9 @@ cd2安装在了哪里?
 > 安卓默认安装在/data/data/com.termux/files/home/clouddrive/  
 > 其它平台默认安装在 /opt/clouddrive/  
 
+怎么修改默认的SMB密码?  
+> smbpasswd -a root  
+
 ### 安装问题  
 提示:   
 -ash: bash: not found  
