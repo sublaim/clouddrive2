@@ -121,6 +121,22 @@ CHECK() {
 }
 
 INSTALL() {
+  # Download procd fuse3
+  if [[ "$check_procd" == "exist" ]]; then
+  op_packages=("fuse3-utils" "libfuse3-3")
+  INSTALL_SUCCESS=true
+  for op_pkg in "${op_packages[@]}"; do
+      if ! opkg list-installed | grep -q "$op_pkg"; then
+          opkg install "$op_pkg" > /dev/null
+          if ! [ $? -eq 0 ]; then
+              INSTALL_SUCCESS=false
+          fi
+      fi
+  done
+  if [ "$INSTALL_SUCCESS" = false ]; then
+      echo -e "${RED_COLOR}安装 OP_FUSE3 软件包失败，请检查软件源和网络环境${RES}"
+  fi
+
   # Download macFUSE
   if [[ "$os_type" == "Darwin" ]]; then
     fuse_version=$(curl -s https://api.github.com/repos/osxfuse/osxfuse/releases/latest | grep -Eo '\s\"name\": \"macfuse-.+?\.dmg\"' | awk -F'"' '{print $4}')
@@ -158,6 +174,9 @@ INSTALL() {
   fi
   # remove temp
   rm -f /tmp/clouddrive*
+  if [ ! -d "/CloudNAS" ]; then
+      mkdir "/CloudNAS"
+  fi
 }
 
 DOCKER() {
@@ -225,7 +244,7 @@ get-local-ipv4-select() {
   head -n 1 <<<"$ips"
 }
 
-SESSIONS() {
+DAEMON() {
 if [[ "$os_type" == "Linux" ]]; then
   if [[ "$check_procd" == "exist" ]]; then
     touch /etc/init.d/clouddrive
@@ -364,7 +383,7 @@ elif [ "$1" = "install" ]; then
   else
     CHECK
     INSTALL
-    SESSIONS
+    DAEMON
     if [ -f "$INSTALL_PATH/clouddrive" ]; then
       SUCCESS
     else

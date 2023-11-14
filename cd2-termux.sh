@@ -132,7 +132,7 @@ get-local-ipv4-select() {
   head -n 1 <<<"$ips"
 }
 
-SESSIONS() {
+DAEMON() {
   if [[ "$CHECK_ROOT" == "root" ]]; then
     cd_start="sudo ./clouddrive"
   else
@@ -179,7 +179,7 @@ if [ "$1" = "uninstall" ]; then
   UNINSTALL
 elif [ "$1" = "install" ]; then
     INSTALL
-    SESSIONS
+    DAEMON
     if [ -f "$INSTALL_PATH/clouddrive" ]; then
       SUCCESS
     else
