@@ -77,7 +77,7 @@ curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/cloud
 ## 一键开启 SMB 与 NFS 共享
 - 网盘文件通过 SMB/NFS 共享给其它设备   
 - 只支持 Openwrt 系列及其衍生版   
-**前提是使用一键安装脚本安装的 cd2 且网盘挂载目录为/CloudNAS**  
+- **前提是使用一键安装脚本安装的 cd2 且网盘挂载目录为/CloudNAS**  
 
 ### 共享
 ```shell
@@ -137,7 +137,13 @@ cd2安装在了哪里?
 > 安卓默认安装在/data/data/com.termux/files/home/clouddrive/  
 > 其它平台默认安装在 /opt/clouddrive/  
 
-### 安装问题
+### 安装问题  
+提示:   
+-ash: bash: not found  
+curl: (23) Failure writing output to destination  
+> 多出现在 GL.iNet 上的 MTxxxx设备上.  
+> 缺少bash. 安装 opkg install bash  
+
 提示：curl: (35) Recv failure: Connection reset by peer  
 > 重启「终端」  
 
