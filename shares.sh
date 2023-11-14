@@ -94,17 +94,9 @@ fi
 
 SMB_SETTINGS() {
 # 设置 SMB 密码
-read -s -p $'\033[0;32m请设置您的 smb 共享密码后回车: \033[0m' password1
-echo
-read -s -p $'\033[0;32m请再次输入您的 smb 共享密码后回车: \033[0m' password2
-echo
-
-if [ "$password1" != "$password2" ]; then
-    echo -e "${RED_COLOR}错误: 两次密码不一致${RES}"
-    exit 1
-fi
-
-(echo "$password1"; echo "$password1") | smbpasswd -a root
+echo -e "${GREEN_COLOR}请设置你的 SMB 密码后回车${RES}"
+smbpasswd -a root
+read -s -p "请输入你的 SMB 密码以便保留到信息板" password1
 
 # 备份默认配置
 if [ -f "/etc/config/samba4" ]; then
@@ -176,17 +168,17 @@ NFS_SHARES() {
 echo -e "${GREEN_COLOR}准备设置 NFS 共享${RES}"
 # NFS依赖RPC服务
 NFS_packages=("nfs-kernel-server" "nfs-kernel-server-utils" "nfs-utils" "nfs-utils-libs" "luci-app-nfs" "kmod-fs-nfsd" "kmod-fs-nfs-v4" "kmod-fs-nfs-v3" "kmod-fs-nfs-common-rpcsec" "kmod-fs-nfs-common" "kmod-fs-nfs")
-INSTALL_SUCCESS=true
+INSTALL_SUCCESS="true"
 for nfs_pkg in "${NFS_packages[@]}"; do
     if ! opkg list-installed | grep -q "$nfs_pkg"; then
         opkg install "$nfs_pkg" > /dev/null
         if ! [ $? -eq 0 ]; then
-            INSTALL_SUCCESS=false
+            INSTALL_SUCCESS="false"
         fi
     fi
 done
 
-if [ "$INSTALL_SUCCESS" = false ]; then
+if [ "$INSTALL_SUCCESS" = "false" ]; then
     echo -e "${RED_COLOR}安装 NFS 软件包失败，请检查软件源和网络环境${RES}"
     NFS_STATUS="failure"
 else

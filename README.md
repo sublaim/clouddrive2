@@ -142,7 +142,7 @@ cd2安装在了哪里?
 -ash: bash: not found  
 curl: (23) Failure writing output to destination  
 > 多出现在 GL.iNet 上的 MTxxxx设备上.  
-> 缺少bash. 安装 opkg install bash  
+> 使用 opkg install bash 安装bash即可  
 
 提示：curl: (35) Recv failure: Connection reset by peer  
 > 重启「终端」  
