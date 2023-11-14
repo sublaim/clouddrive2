@@ -124,16 +124,16 @@ INSTALL() {
   # Download procd fuse3
   if [[ "$check_procd" == "exist" ]]; then
     op_packages=("fuse3-utils" "libfuse3-3")
-    INSTALL_SUCCESS=true
+    INSTALL_SUCCESS="true"
     for op_pkg in "${op_packages[@]}"; do
         if ! opkg list-installed | grep -q "$op_pkg"; then
             opkg install "$op_pkg" > /dev/null
             if ! [ $? -eq 0 ]; then
-                INSTALL_SUCCESS=false
+                INSTALL_SUCCESS="false"
             fi
         fi
     done
-    if [ "$INSTALL_SUCCESS" = false ]; then
+    if [ "$INSTALL_SUCCESS" = "false" ]; then
         echo -e "${RED_COLOR}安装 OP_FUSE3 软件包失败，请检查软件源和网络环境${RES}"
     fi
   fi

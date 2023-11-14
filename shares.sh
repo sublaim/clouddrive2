@@ -73,17 +73,17 @@ echo -e "${GREEN_COLOR}正在更新软件源...${RES}"
 opkg update
 # 安装必要的包
 SMB_packages=("samba4-server" "luci-app-samba4" "samba4-libs" "samba4-admin" "samba4-client")
-INSTALL_SUCCESS=true
+INSTALL_SUCCESS="true"
 for smb_pkg in "${SMB_packages[@]}"; do
     if ! opkg list-installed | grep -q "$smb_pkg"; then
         opkg install "$smb_pkg" > /dev/null
         if ! [ $? -eq 0 ]; then
-            INSTALL_SUCCESS=false
+            INSTALL_SUCCESS="false"
         fi
     fi
 done
 
-if [ "$INSTALL_SUCCESS" = false ]; then
+if [ "$INSTALL_SUCCESS" = "false" ]; then
     echo -e "${RED_COLOR}安装 SMB 软件包失败，请检查软件源和网络环境${RES}"
     SMB_STATUS="failure"
 else
@@ -264,7 +264,7 @@ echo -e "\r\n${GREEN_COLOR}SMB/NFS共享已在系统中移除！${RES}\r\n"
 
 SUCCESS() {
 clear
-echo -e "${GREEN_COLOR}请用您的设备连接以下可用的共享服务${RES}"
+echo -e "${GREEN_COLOR}请用您的设备连接以下可用的共享服务${RES}\r\n"
 if [ "$SMB_STATUS" = "succeed" ]; then
   echo -e "${GREEN_COLOR}SMB 成功:${RES}"
   echo -e "SMB主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
