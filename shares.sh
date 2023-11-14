@@ -94,9 +94,13 @@ fi
 
 SMB_SETTINGS() {
 # 设置 SMB 密码
-echo -e "${GREEN_COLOR}请设置你的 SMB 密码后回车${RES}"
-smbpasswd -a root
-read -s -p "请输入你的 SMB 密码以便保留到信息板" password1
+echo -e "${GREEN_COLOR}设置 SMB 默认密码${RES}"
+# 默认密码
+password="123456"
+{
+  echo "$password"
+  echo "$password"
+} | smbpasswd -a root
 
 # 备份默认配置
 if [ -f "/etc/config/samba4" ]; then
@@ -261,7 +265,7 @@ if [ "$SMB_STATUS" = "succeed" ]; then
   echo -e "${GREEN_COLOR}SMB 成功:${RES}"
   echo -e "SMB主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
   echo -e "SMB用户名：${GREEN_COLOR}root${RES}"
-  echo -e "SMB密码：${GREEN_COLOR}$password1${RES}"
+  echo -e "SMB默认密码：${GREEN_COLOR}$password${RES}"
   echo -e "SMB端口：${GREEN_COLOR}445 (可选)${RES}"
   echo -e "SMB路径：${GREEN_COLOR}/ (可选)${RES}\r\n"
 else
