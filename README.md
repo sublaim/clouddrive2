@@ -12,6 +12,9 @@
     - [安装 (未ROOT设备)](#安装-未root设备)
     - [安装 (已ROOT设备)](#安装-已root设备)
     - [卸载](#卸载)
+  - [一键开启 SMB 与 NFS 共享](#一键开启-smb-与-nfs-共享)
+    - [共享](#共享)
+    - [取消共享](#取消共享)
   - [如何更新?](#如何更新)
   - [在哪运行？](#在哪运行)
     - [OpenWRT](#openwrt)
@@ -71,6 +74,22 @@ curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/cloud
 curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
 ```
 
+## 一键开启 SMB 与 NFS 共享
+- 网盘文件通过 SMB/NFS 共享给其它设备   
+- 只支持 Openwrt 系列及其衍生版   
+**前提是使用一键安装脚本安装的 cd2 且网盘挂载目录为/CloudNAS**  
+
+### 共享
+```shell
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
+```
+
+### 取消共享
+```shell
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
+```
+
+
 ## 如何更新?
 请使用官方内置的更新方式: 点击右上角的`!`号
 
@@ -105,6 +124,7 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 
 <img src="./images/termux.png" width="20%">
 
+
 ## 问与答
 这里解决的问题主要来源于群友的反馈
 
@@ -126,7 +146,10 @@ cd2安装在了哪里?
 > 用「卸载命令」再重装
 
 为何挂载后 Emby/Jellyfin 看不到这个挂载目录  
-> 在 Emby/Jellyfin 的 docker run 命令中加入 -v /CloudNAS:/CloudNAS 将目录挂载到 Emby/Jellyfin 容器中的  
+> 在 Emby/Jellyfin 的 docker run 命令中加入 -v /CloudNAS:/CloudNAS 即可将目录挂载到 Emby/Jellyfin 容器   
+
+怎么修改为只有指定设备才能访问 NFS 分享的文件(默认不限制)  
+> 在`/etc/config/nfs`文件中把`*`替换为指定设备的IP  
 
 ### 安卓问题
 为什么 termux 无法挂载网盘到本地？  
@@ -136,6 +159,6 @@ cd2安装在了哪里?
 > 不可以，用了会无法启动。
  
 ## 问题反馈群
-QQ群：943950333
+- QQ讨论群: 943950333 ，加群链接：[点击加入](https://qm.qq.com/q/EroEmk0kkq "交流反馈")  
 
 <img src="./images/QRcode.png" width="20%">
