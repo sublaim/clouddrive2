@@ -263,29 +263,30 @@ echo -e "\r\n${GREEN_COLOR}SMB/NFS共享已在系统中移除！${RES}\r\n"
 
 
 SUCCESS() {
-    clear
-    if [ "$SMB_STATUS" = "succeed" ]; then
-      echo -e "${GREEN_COLOR}SMB 结果:${RES}"
-      echo -e "SMB主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
-      echo -e "SMB用户名：${GREEN_COLOR}root${RES}"
-      echo -e "SMB密码：${GREEN_COLOR}$password2${RES}"
-      echo -e "SMB端口：${GREEN_COLOR}445${RES}"
-      echo -e "SMB路径：${GREEN_COLOR}/${RES}\r\n"
-    else
-        echo -e "${GREEN_COLOR}SMB 结果:${RES}"
-        echo -e "${RED_COLOR}SMB 设置失败${RES}"
-    fi
-    
-    if [ "$NFS_STATUS" = "succeed" ]; then
-      # nfs
-      echo -e "${GREEN_COLOR}NFS 结果:${RES}"
-      echo -e "NFS主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
-      echo -e "NFS端口：${GREEN_COLOR}2049${RES}"
-      echo -e "NFS路径：${GREEN_COLOR}/${RES}\r\n"
-    else
-      echo -e "${GREEN_COLOR}NFS 结果:${RES}"
-      echo -e "${RED_COLOR}NFS 设置失败${RES}"
-    fi
+clear
+echo -e "${GREEN_COLOR}请用您的设备连接以下可用的共享服务${RES}"
+if [ "$SMB_STATUS" = "succeed" ]; then
+  echo -e "${GREEN_COLOR}SMB 成功:${RES}"
+  echo -e "SMB主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
+  echo -e "SMB用户名：${GREEN_COLOR}root${RES}"
+  echo -e "SMB密码：${GREEN_COLOR}$password1${RES}"
+  echo -e "SMB端口：${GREEN_COLOR}445 (可选)${RES}"
+  echo -e "SMB路径：${GREEN_COLOR}/ (可选)${RES}\r\n"
+else
+  echo -e "${GREEN_COLOR}SMB 失败:${RES}"
+  echo -e "${RED_COLOR}SMB 设置失败${RES}"
+fi
+
+if [ "$NFS_STATUS" = "succeed" ]; then
+  # nfs
+  echo -e "${GREEN_COLOR}NFS 成功:${RES}"
+  echo -e "NFS主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
+  echo -e "NFS端口：${GREEN_COLOR}2049 (可选)${RES}"
+  echo -e "NFS路径：${GREEN_COLOR}/ (可选)${RES}\r\n"
+else
+  echo -e "${GREEN_COLOR}NFS 失败:${RES}"
+  echo -e "${RED_COLOR}NFS 设置失败${RES}"
+fi
 }
 
 if [ "$1" = "unshares" ]; then
