@@ -72,7 +72,7 @@ get-local-ipv4-select() {
 CHECK_SMB_KMOD() {
 echo -e "${GREEN_COLOR}正在更新软件源...${RES}"
 opkg update
-if ! opkg list-installed | grep -q "kmod-fs-smbfs-common"; then
+if ! opkg list-installed | grep -q "samba4-server"; then
   KMOD_SMB_SUCCESS="false"
 else
   KMOD_SMB_SUCCESS="true"
