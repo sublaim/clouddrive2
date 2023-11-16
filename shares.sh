@@ -68,9 +68,20 @@ get-local-ipv4-select() {
 }
 
 # ------------- SMB -----------
-SMB_SHARES() {
+# 检查内核模块
+CHECK_SMB_KMOD() {
 echo -e "${GREEN_COLOR}正在更新软件源...${RES}"
 opkg update
+if ! opkg list-installed | grep -q "kmod-fs-smbfs-common"; then
+  KMOD_SMB_SUCCESS="false"
+else
+  KMOD_SMB_SUCCESS="true"
+  SMB_SHARES
+fi
+}
+
+SMB_SHARES() {
+echo -e "${GREEN_COLOR}正在检查必要的ipk包...${RES}"
 # 安装必要的包
 SMB_packages=("samba4-server" "luci-app-samba4" "samba4-libs" "samba4-admin" "samba4-client")
 INSTALL_SUCCESS="true"
@@ -84,11 +95,10 @@ for smb_pkg in "${SMB_packages[@]}"; do
 done
 
 if [ "$INSTALL_SUCCESS" = "false" ]; then
-    echo -e "${RED_COLOR}安装 SMB 软件包失败，请检查软件源和网络环境${RES}"
     SMB_STATUS="failure"
 else
-    SMB_SETTINGS
     SMB_STATUS="succeed"
+    SMB_SETTINGS
 fi
 }
 
@@ -168,10 +178,20 @@ echo -e "${GREEN_COLOR}SMB 设置完毕${RES}"
 
 
 #------------- NFS --------------
+# 检查内核模块
+CHECK_NFS_KMOD() {
+if ! opkg list-installed | grep -q "kmod-fs-nfsd"; then
+  KMOD_NFS_SUCCESS="false"
+else
+  KMOD_NFS_SUCCESS="true"
+  NFS_SHARES
+fi
+}
+
 NFS_SHARES() {
-echo -e "${GREEN_COLOR}准备设置 NFS 共享${RES}"
+echo -e "${GREEN_COLOR}正在设置 NFS 共享...${RES}"
 # NFS依赖RPC服务
-NFS_packages=("nfs-kernel-server" "nfs-kernel-server-utils" "nfs-utils" "nfs-utils-libs" "luci-app-nfs" "kmod-fs-nfsd" "kmod-fs-nfs-v4" "kmod-fs-nfs-v3" "kmod-fs-nfs-common-rpcsec" "kmod-fs-nfs-common" "kmod-fs-nfs")
+NFS_packages=("nfs-kernel-server" "nfs-kernel-server-utils" "nfs-utils" "nfs-utils-libs" "luci-app-nfs")
 INSTALL_SUCCESS="true"
 for nfs_pkg in "${NFS_packages[@]}"; do
     if ! opkg list-installed | grep -q "$nfs_pkg"; then
@@ -183,11 +203,10 @@ for nfs_pkg in "${NFS_packages[@]}"; do
 done
 
 if [ "$INSTALL_SUCCESS" = "false" ]; then
-    echo -e "${RED_COLOR}安装 NFS 软件包失败，请检查软件源和网络环境${RES}"
     NFS_STATUS="failure"
 else
-    NFS_SETTINGS
     NFS_STATUS="succeed"
+    NFS_SETTINGS
 fi
 }
 
@@ -260,36 +279,43 @@ echo -e "\r\n${GREEN_COLOR}SMB/NFS共享已在系统中移除！${RES}\r\n"
 
 SUCCESS() {
 clear
+# SMB
 echo -e "${GREEN_COLOR}请用您的设备连接以下可用的共享服务${RES}\r\n"
-if [ "$SMB_STATUS" = "succeed" ]; then
-  echo -e "${GREEN_COLOR}SMB 成功:${RES}"
+if [ "$KMOD_SMB_SUCCESS" = "false" ]; then
+  echo -e "${GREEN_COLOR}SMB 设置失败:${RES}"
+  echo -e "${RED_COLOR}失败原因: 固件没有 SMB 内核模块${RES}"
+elif [ "$SMB_STATUS" = "failure" ]; then
+  echo -e "${GREEN_COLOR}SMB 设置失败:${RES}"
+  echo -e "${RED_COLOR}失败原因: 软件源或网络${RES}"
+else
+  echo -e "${GREEN_COLOR}SMB 设置成功:${RES}"
   echo -e "SMB主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
   echo -e "SMB用户名：${GREEN_COLOR}root${RES}"
   echo -e "SMB默认密码：${GREEN_COLOR}$password${RES}"
   echo -e "SMB端口：${GREEN_COLOR}445 (可选)${RES}"
   echo -e "SMB路径：${GREEN_COLOR}/ (可选)${RES}\r\n"
-else
-  echo -e "${GREEN_COLOR}SMB 失败:${RES}"
-  echo -e "${RED_COLOR}SMB 设置失败${RES}"
 fi
 
-if [ "$NFS_STATUS" = "succeed" ]; then
-  # nfs
-  echo -e "${GREEN_COLOR}NFS 成功:${RES}"
+# NFS
+if [ "$KMOD_NFS_SUCCESS" = "false" ]; then
+  echo -e "${GREEN_COLOR}NFS 设置失败:${RES}"
+  echo -e "${RED_COLOR}失败原因: 固件没有 NFS 内核模块${RES}"
+elif [ "$NFS_STATUS" = "failure" ]; then
+  echo -e "${GREEN_COLOR}NFS 设置失败:${RES}"
+  echo -e "${RED_COLOR}失败原因: 软件源或网络${RES}"
+else
+  echo -e "${GREEN_COLOR}NFS 设置成功:${RES}"
   echo -e "NFS主机IP：${GREEN_COLOR}$(get-local-ipv4-select)${RES}"
   echo -e "NFS端口：${GREEN_COLOR}2049 (可选)${RES}"
   echo -e "NFS路径：${GREEN_COLOR}/ (可选)${RES}\r\n"
-else
-  echo -e "${GREEN_COLOR}NFS 失败:${RES}"
-  echo -e "${RED_COLOR}NFS 设置失败${RES}"
 fi
 }
 
 if [ "$1" = "unshares" ]; then
   UNSHARE
 elif [ "$1" = "shares" ]; then
-  SMB_SHARES
-  NFS_SHARES
+  CHECK_SMB_KMOD
+  CHECK_NFS_KMOD
   SUCCESS
 else
   echo -e "${RED_COLOR} 错误的命令${RES}"
