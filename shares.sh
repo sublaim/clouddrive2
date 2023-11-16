@@ -115,6 +115,7 @@ password="123456"
 # 备份默认配置
 if [ -f "/etc/config/samba4" ]; then
     cp /etc/config/samba4 /etc/config/samba4.bak
+    rm -rf /etc/config/samba4
 else
     mkdir -p /etc/config
     touch /etc/config/samba4
@@ -148,7 +149,7 @@ if ! grep -q "server min protocol = NT1" /etc/samba/smb.conf.template; then
 fi
 
 
-if ! grep -qE 'config sambashare' /etc/config/samba4 && grep -qE "option path '/CloudNAS'" /etc/config/samba4; then
+if ! grep -qE "option name 'root'" /etc/config/samba4 && ! grep -qE "option path '/CloudNAS'" /etc/config/samba4; then
 cat << EOF >> /etc/config/samba4
 config samba
     option charset 'UTF-8'
