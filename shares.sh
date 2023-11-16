@@ -229,8 +229,8 @@ config share
 	option enabled '1'
 EOF
 
+/etc/init.d/nfs restart
 /etc/init.d/nfs enable
-/etc/init.d/nfs start
 echo -e "${GREEN_COLOR}NFS 设置完毕${RES}"
 }
 
