@@ -72,18 +72,25 @@ get-local-ipv4-select() {
 CHECK_SMB_KMOD() {
 echo -e "${GREEN_COLOR}正在更新软件源...${RES}"
 opkg update
-if ! opkg list-installed | grep -q "samba4-server"; then
-  KMOD_SMB_SUCCESS="false"
-else
+if opkg list-installed | grep -q "samba4-server"; then
   KMOD_SMB_SUCCESS="true"
-  SMB_SHARES
+  SMB_VERSION="samba4"
+elif opkg list-installed | grep -q "samba36-server"; then
+  KMOD_SMB_SUCCESS="true"
+  SMB_VERSION="samba"
+else
+  KMOD_SMB_SUCCESS="false"
 fi
 }
 
 SMB_SHARES() {
 echo -e "${GREEN_COLOR}正在检查必要的ipk包...${RES}"
 # 安装必要的包
-SMB_packages=("samba4-server" "luci-app-samba4" "samba4-libs" "samba4-admin" "samba4-client")
+if [ "$SMB_VERSION" = "samba4" ]; then
+  SMB_packages=("samba4-server" "samba4-libs")
+elif [ "$SMB_VERSION" = "samba" ]; then
+  SMB_packages=("luci-app-samba")
+fi
 INSTALL_SUCCESS="true"
 for smb_pkg in "${SMB_packages[@]}"; do
     if ! opkg list-installed | grep -q "$smb_pkg"; then
@@ -113,13 +120,13 @@ password="123456"
 } | smbpasswd -a root
 
 # 备份默认配置
-if [ -f "/etc/config/samba4" ]; then
-    cp /etc/config/samba4 /etc/config/samba4.bak
-    rm -rf /etc/config/samba4
+if [ -f "/etc/config/$SMB_VERSION" ]; then
+    cp /etc/config/"$SMB_VERSION" /etc/config/"$SMB_VERSION".bak
+    rm -rf /etc/config/"$SMB_VERSION"
 else
     mkdir -p /etc/config
-    touch /etc/config/samba4
-    chmod 600 /etc/config/samba4
+    touch /etc/config/"$SMB_VERSION"
+    chmod 600 /etc/config/"$SMB_VERSION"
 fi
 
 if [ -f "/etc/samba/smb.conf.template" ]; then
@@ -149,8 +156,8 @@ if ! grep -q "server min protocol = NT1" /etc/samba/smb.conf.template; then
 fi
 
 
-if ! grep -qE "option name 'root'" /etc/config/samba4 && ! grep -qE "option path '/CloudNAS'" /etc/config/samba4; then
-cat << EOF >> /etc/config/samba4
+if ! grep -qE "option name 'root'" /etc/config/"$SMB_VERSION" && ! grep -qE "option path '/CloudNAS'" /etc/config/"$SMB_VERSION"; then
+cat << EOF >> /etc/config/"$SMB_VERSION"
 config samba
     option charset 'UTF-8'
     option description 'Samba on OpenWRT'
@@ -172,8 +179,8 @@ config sambashare
 EOF
 fi
 
-/etc/init.d/samba4 start
-/etc/init.d/samba4 enable
+/etc/init.d/"$SMB_VERSION" start
+/etc/init.d/"$SMB_VERSION" enable
 echo -e "${GREEN_COLOR}SMB 设置完毕${RES}"
 }
 
@@ -192,7 +199,7 @@ fi
 NFS_SHARES() {
 echo -e "${GREEN_COLOR}正在设置 NFS 共享...${RES}"
 # NFS依赖RPC服务
-NFS_packages=("nfs-kernel-server" "nfs-kernel-server-utils" "nfs-utils" "nfs-utils-libs" "luci-app-nfs")
+NFS_packages=("nfs-kernel-server" "nfs-kernel-server-utils" "nfs-utils" "nfs-utils-libs")
 INSTALL_SUCCESS="true"
 for nfs_pkg in "${NFS_packages[@]}"; do
     if ! opkg list-installed | grep -q "$nfs_pkg"; then
@@ -220,31 +227,52 @@ else
     touch /etc/config/nfs
 fi
 
+if [ -f "/etc/exports" ]; then
+    cp /etc/exports /etc/exports.bak
+    rm -rf /etc/exports
+else
+    touch /etc/exports
+fi
 
-cat << EOF >> /etc/config/nfs
+if [ ! -e "/etc/init.d/nfs" ]; then
+    nfs_config="/etc/exports"
+    nfs_bin="nfsd"
+else
+    nfs_config="/etc/config/nfs"
+    nfs_bin="nfs"
+fi
+
+
+if [ "$nfs_config" = "/etc/config/nfs" ]; then
+cat << EOF >> "$nfs_config"
 config share
 	option clients '*'
 	option options 'ro,fsid=0,sync,nohide,no_subtree_check,insecure,no_root_squash'
 	option path '$mount_root_path'
 	option enabled '1'
 EOF
+else
+cat << EOF >> "$nfs_config"
+$mount_root_path    *(ro,fsid=0,sync,nohide,no_subtree_check,insecure,no_root_squash)
+EOF
+fi
 
-/etc/init.d/nfs restart
-/etc/init.d/nfs enable
+/etc/init.d/"$nfs_bin" restart
+/etc/init.d/"$nfs_bin" enable
 echo -e "${GREEN_COLOR}NFS 设置完毕${RES}"
 }
 
 
 UNSHARE() {
 # SMB
-if [ -f "/etc/config/samba4.bak" ]; then
-    if [ -f "/etc/config/samba4" ]; then
-        rm -rf /etc/config/samba4 && mv /etc/config/samba4.bak /etc/config/samba4
+if [ -f "/etc/config/$SMB_VERSION.bak" ]; then
+    if [ -f "/etc/config/$SMB_VERSION" ]; then
+        rm -rf /etc/config/"$SMB_VERSION" && mv /etc/config/"$SMB_VERSION".bak /etc/config/"$SMB_VERSION"
     else
-        mv /etc/config/samba4.bak /etc/config/samba4
+        mv /etc/config/"$SMB_VERSION".bak /etc/config/"$SMB_VERSION"
     fi
 else
-    rm -rf /etc/config/samba4
+    rm -rf /etc/config/"$SMB_VERSION"
 fi
 
 if [ -f "/etc/samba/smb.conf.bak" ]; then
@@ -313,9 +341,13 @@ fi
 }
 
 if [ "$1" = "unshares" ]; then
+  CHECK_SMB_KMOD
   UNSHARE
 elif [ "$1" = "shares" ]; then
   CHECK_SMB_KMOD
+  if [ "$KMOD_SMB_SUCCESS" = "true" ]; then
+    SMB_SHARES
+  fi
   CHECK_NFS_KMOD
   SUCCESS
 else

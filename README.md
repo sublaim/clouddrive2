@@ -77,6 +77,7 @@ curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/cloud
 ## 一键开启 SMB 与 NFS 共享
 - **前提是使用一键安装脚本安装的 cd2 且网盘挂载目录为/CloudNAS**  
 - 只支持 Openwrt 系列及其衍生版, 大部分设备可以开启 SMB, NFS能不能开启看固件  
+- GL.iNET 设备需要提前在主路由界面 -> 应用程序 -> 网络共享或文件共享 -> 开启 samba  
 
 ### 共享
 ```shell
