@@ -68,16 +68,15 @@ fi
 ARCH="UNKNOWN"
 
 if [ "$platform" = "x86_64" ]; then
-  ARCH=amd64
+  ARCH=x86_64
 elif [ "$platform" = "aarch64" ]; then
-  ARCH=arm64
+  ARCH=aarch64
+elif [ "$platform" = "armv7l" ]; then
+  ARCH=armv7
 fi
 
 if [ "$UID" != "0" ]; then
   echo -e "\r\n${RED_COLOR}出错了，请使用 root 权限重试！${RES}\r\n" 1>&2
-  exit 1
-elif [ "$ARCH" == "UNKNOWN" ]; then
-  echo -e "\r\n${RED_COLOR}出错了${RES}，一键安装目前仅支持 x86_64和arm64 平台。\r\n"
   exit 1
 elif ! command -v systemctl >/dev/null 2>&1; then
   if command -v opkg >/dev/null 2>&1; then
@@ -95,6 +94,9 @@ elif ! command -v systemctl >/dev/null 2>&1; then
     echo -e "\r\n${RED_COLOR}出错了，无法确定你当前的 Linux 发行版。${RES}\r\n"
     exit 1
   fi
+elif [ "$ARCH" == "UNKNOWN" ]; then
+  echo -e "\r\n${RED_COLOR}出错了${RES}，一键安装目前仅支持 x86_64和arm64 平台。\r\n"
+  exit 1
 else
   if command -v netstat >/dev/null 2>&1; then
     check_port=$(netstat -lnp | grep 19798 | awk '{print $7}' | awk -F/ '{print $1}')
@@ -164,7 +166,7 @@ INSTALL() {
     rm -rf /tmp/macfuse.dmg
   fi
   # Download clouddrive2
-  clouddrive_version=$(curl -s https://api.github.com/repos/cloud-fs/cloud-fs.github.io/releases/latest | grep -Eo "\s\"name\": \"clouddrive-2-$os-$platform-.+?\.tgz\"" | awk -F'"' '{print $4}')
+  clouddrive_version=$(curl -s https://api.github.com/repos/cloud-fs/cloud-fs.github.io/releases/latest | grep -Eo "\s\"name\": \"clouddrive-2-$os-$ARCH-.+?\.tgz\"" | awk -F'"' '{print $4}')
   echo -e "\r\n${GREEN_COLOR}下载 clouddrive2 $VERSION ...${RES}"
   curl -L ${mirror}https://github.com/cloud-fs/cloud-fs.github.io/releases/latest/download/$clouddrive_version -o /tmp/clouddrive.tgz $CURL_BAR
   if [ $? -eq 0 ]; then
