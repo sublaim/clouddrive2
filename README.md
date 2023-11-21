@@ -1,7 +1,12 @@
+
+# 通知
+2023年11月21日之前的命令由于更换镜像地址已无法使用.  
+
 # 一键安装 Clouddrive2 脚本
 脚本非官方出品，由于官方帮助不适合新手故写此脚本。指在帮助新手用户快速使用 clouddrive2 挂载网盘。
 
 ## 目录
+- [通知](#通知)
 - [一键安装 Clouddrive2 脚本](#一键安装-clouddrive2-脚本)
   - [目录](#目录)
   - [推荐码](#推荐码)
@@ -50,7 +55,7 @@
  
 ```shell
 # 国内镜像加速
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install mirror
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install
 ```
@@ -58,7 +63,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" |
 ### 卸载命令
 ```shell
 # 国内镜像加速
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall mirror
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall
 ```
@@ -70,7 +75,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" |
 - 以下命令2选1  
 ```shell
 # 镜像加速
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install mirror
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install
 ```
@@ -79,7 +84,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 - 以下命令2选1  
 ```shell
 # 镜像加速
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root mirror
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root
 ```
@@ -88,7 +93,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 - 以下命令2选1  
 ```shell
 # 镜像加速
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall mirror
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
 ```
@@ -102,7 +107,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 - 以下命令2选1  
 ```shell
 # 国内镜像加速
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
 ```
@@ -111,7 +116,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh
 - 以下命令2选1  
 ```shell
 # 国内镜像加速
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
 ```

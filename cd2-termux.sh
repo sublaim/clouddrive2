@@ -20,7 +20,7 @@ if [ ! -n "$3" ]; then
   mirror=""
 elif [ "$3" = "mirror" ]; then
   echo -e "\r\n${YELLOW_COLOR}使用镜像 ${3}${RES}\r\n" 1>&2
-  mirror="https://gh-proxy.com/"
+  mirror="https://mirror.ghproxy.com/"
 else
   echo -e "${RED_COLOR} 错误的命令${RES}"
   exit 1

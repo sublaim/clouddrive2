@@ -13,7 +13,7 @@ if [ ! -n "$2" ]; then
   INSTALL_PATH='/opt/clouddrive'
 else
   if [ "$2" = "mirror" ]; then
-    mirror="https://gh-proxy.com/"
+    mirror="https://mirror.ghproxy.com/"
   else
     mirror=""
     if [[ $2 == */ ]]; then
