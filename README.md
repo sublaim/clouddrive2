@@ -1,6 +1,6 @@
 # 一键安装 Clouddrive2 脚本
 脚本非官方出品，由于官方帮助不适合新手故写此脚本。指在帮助新手用户快速使用 clouddrive2 挂载网盘。
- 
+
 ## 目录
 - [一键安装 Clouddrive2 脚本](#一键安装-clouddrive2-脚本)
   - [目录](#目录)
@@ -43,35 +43,54 @@
 
 ## 安装
 ### 安装命令
-Mac、Linux、OpenWRT等 在「终端」运行下面的「命令」
+- Mac、Linux、OpenWRT等 在「终端」运行下面的「命令」  
+- 不知道在哪里运行这些命令？[点击查看](#在哪运行)  
+- 镜像加速和代理的区别? [点击查看](#通规问题)  
+- 由于镜像站经常被墙或其它原因经常变动导致无法使用请用下面的「代理」命令,前提是你有开了代理  
  
-不知道在哪里运行这些命令？[点击查看](#在哪运行)
-
 ```shell
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install
+# 国内镜像加速
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install mirror
+# 代理
+curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install
 ```
 
 ### 卸载命令
 ```shell
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall
+# 国内镜像加速
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall mirror
+# 代理
+curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall
 ```
 
 ## 安卓
-安卓在termux里运行下面的「命令」
+安卓在termux里运行下面的「命令」  
 
 ### 安装 (未ROOT设备)
+- 以下命令2选1  
 ```shell
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install
+# 镜像加速
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install mirror
+# 代理
+curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install
 ```
 
 ### 安装 (已ROOT设备)
+- 以下命令2选1  
 ```shell
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root
+# 镜像加速
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root mirror
+# 代理
+curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root
 ```
 
 ### 卸载
+- 以下命令2选1  
 ```shell
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
+# 镜像加速
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall mirror
+# 代理
+curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
 ```
 
 ## 一键开启 SMB 与 NFS 共享
@@ -80,13 +99,21 @@ curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/cloud
 - GL.iNET 设备需要提前在主路由界面 -> 应用程序 -> 网络共享或文件共享 -> 开启 samba  
 
 ### 共享
+- 以下命令2选1  
 ```shell
+# 国内镜像加速
 curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
+# 代理
+curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
 ```
 
 ### 取消共享
+- 以下命令2选1  
 ```shell
+# 国内镜像加速
 curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
+# 代理
+curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
 ```
 
 
@@ -129,8 +156,9 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 这里解决的问题主要来源于群友的反馈
 
 ### 通规问题
-是否需要开代理？  
-> 不需要。脚本已内置了镜像加速。
+国内镜像加速和代理有什么区别？  
+> 镜像加速优点是不使用代理工具可以运行. 缺点是镜像加速地址经常失效导致命令经常变动.  
+> 代理优点是命令不会变动. 代理缺点是国内无法直接使用需要改hosts或其它代理的方式才能运行.  
  
 cd2安装在了哪里?   
 > docker默认挂载点在 /CloudNAS  
@@ -149,6 +177,9 @@ curl: (23) Failure writing output to destination
 
 提示：curl: (35) Recv failure: Connection reset by peer  
 > 重启「终端」  
+
+提示: docker: Error response from daemon: path /CloudAS is mounted on/ but it is nota shared mount.  
+> 把 `mount --make-shared` 插入到 /「启动项」->「本地启动脚本」中的 'exit 0' 之前  
 
 ### 安装后问题
 登录一直提示连接超时  

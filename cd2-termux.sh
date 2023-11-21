@@ -16,6 +16,17 @@ else
   fi
 fi
 
+if [ ! -n "$3" ]; then
+  mirror=""
+elif [ "$3" = "mirror" ]; then
+  echo -e "\r\n${YELLOW_COLOR}使用镜像 ${3}${RES}\r\n" 1>&2
+  mirror="https://gh-proxy.com/"
+else
+  echo -e "${RED_COLOR} 错误的命令${RES}"
+  exit 1
+fi
+
+
 RED_COLOR='\e[1;31m'
 GREEN_COLOR='\e[1;32m'
 YELLOW_COLOR='\e[1;33m'
@@ -81,7 +92,7 @@ INSTALL() {
   INSTALL_PATH=$HOME/clouddrive
   clouddrive_version=$(curl -s https://api.github.com/repos/cloud-fs/cloud-fs.github.io/releases/latest | grep -Eo "\s\"name\": \"clouddrive-2-android-$ARCH-.+?\.tgz\"" | awk -F'"' '{print $4}')
   echo -e "\r\n${GREEN_COLOR}下载 clouddrive2 $VERSION ...${RES}"
-  curl -L https://gh-proxy.com/https://github.com/cloud-fs/cloud-fs.github.io/releases/latest/download/$clouddrive_version -o $HOME/clouddrive.tgz $CURL_BAR
+  curl -L ${mirror}https://github.com/cloud-fs/cloud-fs.github.io/releases/latest/download/$clouddrive_version -o $HOME/clouddrive.tgz $CURL_BAR
   if [ $? -eq 0 ]; then
     echo -e "clouddrive 下载完成"
   else
