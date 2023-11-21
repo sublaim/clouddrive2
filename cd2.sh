@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # https://github.com/sublaim/clouddrive2
 # INSTALL_PATH='/opt/clouddrive'
 chmod +x "$0"
@@ -13,6 +13,7 @@ if [ ! -n "$2" ]; then
   INSTALL_PATH='/opt/clouddrive'
 else
   if [ "$2" = "mirror" ]; then
+    INSTALL_PATH='/opt/clouddrive'
     mirror="https://mirror.ghproxy.com/"
   else
     mirror=""
@@ -118,7 +119,7 @@ CHECK() {
   if [ $check_port ]; then
     kill -9 $check_port
   fi
-  if [ ! -d "$INSTALL_PATH/" ]; then
+  if [ ! -d "$INSTALL_PATH" ]; then
     mkdir -p $INSTALL_PATH
   else
     rm -rf $INSTALL_PATH && mkdir -p $INSTALL_PATH
@@ -128,6 +129,8 @@ CHECK() {
 INSTALL() {
   # Download procd fuse3
   if [[ "$check_procd" == "exist" ]]; then
+    echo -e "\r\n${GREEN_COLOR}更新软件源...${RES}"
+    opkg update > /dev/null
     op_packages=("fuse3-utils" "libfuse3-3")
     INSTALL_SUCCESS="true"
     for op_pkg in "${op_packages[@]}"; do
