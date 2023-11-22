@@ -5,25 +5,38 @@ chmod +x "$0"
 if [ ! -n "$2" ]; then
   echo -e "\r\n${YELLOW_COLOR}非 Root 方式${RES}\r\n" 1>&2
   CHECK_ROOT="notroot"
+  mirror=""
 else
-  if [[ $2 == "root" ]]; then
+  if [[ $2 == "root" && ! -n "$3" ]]; then
     echo -e "\r\n${YELLOW_COLOR}Root 方式${RES}\r\n" 1>&2
     CHECK_ROOT="root"
+    mirror=""
     pkg install tsu -y
-  else
-    echo -e "${RED_COLOR} 错误的命令${RES}"
+  elif [[ $2 == "mirror" && ! -n "$3" ]]; then
+    echo -e "\r\n${YELLOW_COLOR}使用镜像 ${3}${RES}\r\n" 1>&2
+    mirror="https://mirror.ghproxy.com/"
+    CHECK_ROOT="notroot"
+  elif [[ "$2" != "root" && "$2" != "mirror" ]]; then
+    echo -e "${RED_COLOR}命令错误${RES}"
     exit 1
+  else
+    if [[ $2 == "root" && $3 == "mirror" ]]; then
+      echo -e "\r\n${YELLOW_COLOR}Root 方式${RES}\r\n" 1>&2
+      CHECK_ROOT="root"
+      pkg install tsu -y
+      echo -e "\r\n${YELLOW_COLOR}使用镜像 ${3}${RES}\r\n" 1>&2
+      mirror="https://mirror.ghproxy.com/"
+    elif [[ $2 == "mirror" && $3 == "root" ]]; then
+      echo -e "\r\n${YELLOW_COLOR}Root 方式${RES}\r\n" 1>&2
+      CHECK_ROOT="root"
+      pkg install tsu -y
+      echo -e "\r\n${YELLOW_COLOR}使用镜像 ${3}${RES}\r\n" 1>&2
+      mirror="https://mirror.ghproxy.com/"
+    else
+      echo -e "${RED_COLOR}命令错误${RES}"
+      exit 1
+    fi
   fi
-fi
-
-if [ ! -n "$3" ]; then
-  mirror=""
-elif [ "$3" = "mirror" ]; then
-  echo -e "\r\n${YELLOW_COLOR}使用镜像 ${3}${RES}\r\n" 1>&2
-  mirror="https://mirror.ghproxy.com/"
-else
-  echo -e "${RED_COLOR} 错误的命令${RES}"
-  exit 1
 fi
 
 
