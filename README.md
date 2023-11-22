@@ -93,7 +93,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 - 以下命令2选1  
 ```shell
 # 镜像加速
-curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall mirror
+curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
 ```
