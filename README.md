@@ -184,7 +184,7 @@ curl: (23) Failure writing output to destination
 > 重启「终端」  
 
 提示: docker: Error response from daemon: path /CloudAS is mounted on/ but it is nota shared mount.  
-> 把 `mount --make-shared` 插入到 /「启动项」->「本地启动脚本」中的 'exit 0' 之前  
+> 把 `mount --make-shared /` 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前  
 
 ### 安装后问题
 登录一直提示连接超时  

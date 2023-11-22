@@ -97,7 +97,7 @@ INSTALL() {
     fi
     unzip $HOME/fuse.zip -d $PREFIX/bin
     mv $PREFIX/bin/fusermount $PREFIX/bin/fusermount3
-    chmod 777 $PREFIX/bin/fusermount3
+    chmod 700 $PREFIX/bin/fusermount3
     rm -rf $HOME/fuse.zip
   fi
   # Download clouddrive2
