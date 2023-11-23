@@ -35,7 +35,7 @@
 
 ## 推荐码
 使用推荐码购买cd2会员最高可以优惠100元  
- 
+
 我的推荐码：**`Xm3K25D3`**
 
 支持
@@ -141,12 +141,12 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh
 
 ### Mac
 打开「启动器」在上面的「搜索框」搜索「终端」或「terminal」  
- 
+
 第1步  
 
 <img src="./images/mac1.png" width="30%">   
 第2步  
- 
+
 <img src="./images/mac2.png" width="70%">   
 
 ### Linux
@@ -162,56 +162,55 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 这里解决的问题主要来源于群友的反馈
 
 ### 通规问题
-国内镜像加速和代理有什么区别？  
+***国内镜像加速和代理有什么区别？***  
 > 镜像加速优点是不使用代理工具可以运行. 缺点是镜像加速地址经常失效导致命令经常变动.  
 > 代理优点是命令不会变动. 代理缺点是国内无法直接使用需要改hosts或其它代理的方式才能运行.  
- 
-cd2安装在了哪里?   
+
+***cd2安装在了哪里? ***  
 > docker默认挂载点在 /CloudNAS  
 > 安卓默认安装在/data/data/com.termux/files/home/clouddrive/  
 > 其它平台默认安装在 /opt/clouddrive/  
 
-怎么修改默认的SMB密码?  
+***怎么修改默认的SMB密码?***  
 > smbpasswd -a root  
 
 ### 安装问题  
-提示:   
--ash: bash: not found  
-curl: (23) Failure writing output to destination  
+***-ash: bash: not found***  
+***curl: (23) Failure writing output to destination***  
 > 多出现在 GL.iNet 上的 MTxxxx设备上.  
 > 使用 opkg install bash 安装bash即可  
 
-提示：curl: (35) Recv failure: Connection reset by peer  
+***curl: (35) Recv failure: Connection reset by peer***  
 > 重启「终端」  
 
-提示: docker: Error response from daemon: path /CloudAS is mounted on/ but it is nota shared mount.  
+***docker: Error response from daemon: path /CloudAS is mounted on/ but it is nota shared mount.***  
 > 把 `mount --make-shared /` 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前  
 
 ### 安装后问题
-IO Error find fusermount binary failed CannotFindBinaryPath  
+***IO Error find fusermount binary failed CannotFindBinaryPath***  
 > FUSE3缺失  
 > OP使用opkg update && opkg install fuse3-utils libfuse3-3 安装.  
 > Linux因各发行版不同自行安装  
 
-IO error fusemount run failed  
-> ls /dev/fuse | grpe fuse 如果没有没输出则是缺少fuse模块  
+***IO error fusemount run failed***  
+> ls /dev/fuse | grep fuse 如果没有没输出则是缺少fuse模块  
 
-登录一直提示连接超时  
+***登录一直提示连接超时***  
 > 用「卸载命令」再重装
 
-为何挂载后 Emby/Jellyfin 看不到这个挂载目录  
+***为何挂载后 Emby/Jellyfin 看不到这个挂载目录***  
 > 在 Emby/Jellyfin 的 docker run 命令中加入 -v /CloudNAS:/CloudNAS 即可将目录挂载到 Emby/Jellyfin 容器   
 
-怎么修改为只有指定设备才能访问 NFS 分享的文件(默认不限制)  
+***怎么修改为只有指定设备才能访问 NFS 分享的文件(默认不限制)***  
 > 在`/etc/config/nfs`文件中把`*`替换为指定设备的IP  
 
 ### 安卓问题
-为什么 termux 无法挂载网盘到本地？  
+***为什么 termux 无法挂载网盘到本地？***  
 > 非Root用户无法挂载。
-  
-非 root 设备可以用 root 命令吗？  
+
+***非 root 设备可以用 root 命令吗？***  
 > 不可以，用了会无法启动。
- 
+
 ## 问题反馈群
 - QQ讨论群: 943950333 ，加群链接：[点击加入](https://qm.qq.com/q/EroEmk0kkq "交流反馈")  
 
