@@ -225,7 +225,7 @@ DOCKER() {
     --device /dev/fuse:/dev/fuse \
     cloudnas/clouddrive2:latest 
     if [ $? -eq 0 ]; then
-      echo "clouddrive 容器已成功运行"
+      echo -e "${GREEN_COLOR}clouddrive 容器已成功运行${RES}"
     else
       echo -e "${RED_COLOR}clouddrive 容器未能成功运行${RES}"
       exit 1

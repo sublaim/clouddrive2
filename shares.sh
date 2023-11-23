@@ -119,6 +119,13 @@ password="123456"
   echo "$password"
 } | smbpasswd -a root
 
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN_COLOR}设置密码成功${RES}"
+else
+  echo -e "${RED_COLOR}设置密码失败,请重新尝试运行${RES}"
+  exit 1
+fi
+
 # 备份默认配置
 if [ -f "/etc/config/$SMB_VERSION" ]; then
     cp /etc/config/"$SMB_VERSION" /etc/config/"$SMB_VERSION".bak

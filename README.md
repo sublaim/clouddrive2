@@ -177,7 +177,7 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 ### 安装问题  
 **-ash: bash: not found**  
 **curl: (23) Failure writing output to destination**  
-> *多出现在 GL.iNet 上的 MTxxxx设备上.*  
+> *多出现在 GL.iNet 品牌下的 MTxxxx设备上.*  
 > *使用 opkg install bash 安装bash即可*  
 
 **curl: (35) Recv failure: Connection reset by peer**  
@@ -194,6 +194,9 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 
 **IO error fusemount run failed**  
 > *ls /dev/fuse | grep fuse 如果没有没输出则是缺少fuse模块*  
+
+**重启后 docker 上的 cd2 容器没有自动运行**  
+> *把 mount --make-shared / 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前*  
 
 **登录一直提示连接超时**  
 > *用「卸载命令」再重装*
