@@ -188,10 +188,13 @@ curl: (23) Failure writing output to destination
 > 把 `mount --make-shared /` 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前  
 
 ### 安装后问题
-IO error fusemount run failed  
+IO Error find fusermount binary failed CannotFindBinaryPath  
 > FUSE3缺失  
 > OP使用opkg update && opkg install fuse3-utils libfuse3-3 安装.  
 > Linux因各发行版不同自行安装  
+
+IO error fusemount run failed  
+> ls /dev/fuse | grpe fuse 如果没有没输出则是缺少fuse模块  
 
 登录一直提示连接超时  
 > 用「卸载命令」再重装
