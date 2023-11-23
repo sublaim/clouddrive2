@@ -144,7 +144,7 @@ INSTALL() {
         fi
     done
     if [ "$INSTALL_SUCCESS" = "false" ]; then
-        echo -e "${RED_COLOR}安装 OP_FUSE3 软件包失败，请检查软件源和网络环境${RES}"
+        echo -e "${RED_COLOR}安装 FUSE3 软件包失败，可能无法挂载${RES}"
     fi
   fi
 
@@ -201,11 +201,12 @@ DOCKER() {
   if ! grep -q "mount --make-shared /" /etc/rc.local; then
       echo -e "${RED_COLOR}出错了${RES}"
       echo -e "${RED_COLOR}请手动把 'mount --make-shared /' 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前,再重试${RES}"
+      exit 1
   fi
 
   # run docker
   if [ "$check_docker" == "exist" ]; then
-    mount --make-shared $(df -P / | tail -1 | awk '{ print $6 }')
+    mount --make-shared /
     echo -e "${GREEN_COLOR}正在下载 clouddrive 镜像，请稍候...${RES}"
     docker pull cloudnas/clouddrive2:latest 
     docker run -d \

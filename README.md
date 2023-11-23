@@ -52,7 +52,8 @@
 - 不知道在哪里运行这些命令？[点击查看](#在哪运行)  
 - 镜像加速和代理的区别? [点击查看](#通规问题)  
 - 由于镜像站经常被墙或其它原因经常变动导致无法使用请用下面的「代理」命令,前提是你有开了代理  
- 
+- 优先使用 docker 的安装方式.如果没有docker会使用其它方式安装  
+
 ```shell
 # 国内镜像加速
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install mirror
@@ -187,6 +188,11 @@ curl: (23) Failure writing output to destination
 > 把 `mount --make-shared /` 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前  
 
 ### 安装后问题
+IO error fusemount run failed  
+> FUSE3缺失  
+> OP使用opkg update && opkg install fuse3-utils libfuse3-3 安装.  
+> Linux因各发行版不同自行安装  
+
 登录一直提示连接超时  
 > 用「卸载命令」再重装
 
