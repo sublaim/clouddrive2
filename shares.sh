@@ -271,14 +271,14 @@ echo -e "${GREEN_COLOR}NFS 设置完毕${RES}"
 
 UNSHARE() {
 # SMB
-if [ -f "/etc/config/$SMB_VERSION.bak" ]; then
-    if [ -f "/etc/config/$SMB_VERSION" ]; then
-        rm -rf /etc/config/"$SMB_VERSION" && mv /etc/config/"$SMB_VERSION".bak /etc/config/"$SMB_VERSION"
+if [ -f "/etc/config/${SMB_VERSION}.bak" ]; then
+    if [ -f "/etc/config/${SMB_VERSION}" ]; then
+        rm -rf /etc/config/${SMB_VERSION} && mv /etc/config/${SMB_VERSION}.bak /etc/config/${SMB_VERSION}
     else
-        mv /etc/config/"$SMB_VERSION".bak /etc/config/"$SMB_VERSION"
+        mv /etc/config/${SMB_VERSION}.bak /etc/config/${SMB_VERSION}
     fi
 else
-    rm -rf /etc/config/"$SMB_VERSION"
+    rm -rf /etc/config/${SMB_VERSION}
 fi
 
 if [ -f "/etc/samba/smb.conf.bak" ]; then
