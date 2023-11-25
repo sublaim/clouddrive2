@@ -110,22 +110,6 @@ fi
 }
 
 SMB_SETTINGS() {
-# 设置 SMB 密码
-echo -e "${GREEN_COLOR}设置 SMB 默认密码${RES}"
-# 默认密码
-password="123456"
-{
-  echo "$password"
-  echo "$password"
-} | smbpasswd -a root
-
-if [ $? -eq 0 ]; then
-  echo -e "${GREEN_COLOR}设置密码成功${RES}"
-else
-  echo -e "${RED_COLOR}设置密码失败,请重新尝试运行${RES}"
-  exit 1
-fi
-
 # 备份默认配置
 if [ -f "/etc/config/$SMB_VERSION" ]; then
     cp /etc/config/"$SMB_VERSION" /etc/config/"$SMB_VERSION".bak
@@ -147,6 +131,21 @@ else
     ln -s /var/etc/smb.conf /etc/samba/smb.conf
 fi
 
+# 设置 SMB 密码
+echo -e "${GREEN_COLOR}设置 SMB 默认密码${RES}"
+# 默认密码
+password="123456"
+{
+  echo "$password"
+  echo "$password"
+} | smbpasswd -a root
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN_COLOR}设置密码成功${RES}"
+else
+  echo -e "${RED_COLOR}设置密码失败,请重新尝试运行${RES}"
+  exit 1
+fi
 
 # 设置 root 用户
 if ! grep -q "#invalid users = root" /etc/samba/smb.conf.template; then
