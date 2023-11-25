@@ -144,7 +144,6 @@ if [ $? -eq 0 ]; then
   echo -e "${GREEN_COLOR}设置密码成功${RES}"
 else
   echo -e "${RED_COLOR}设置密码失败,请重新尝试运行${RES}"
-  exit 1
 fi
 
 # 设置 root 用户
@@ -277,8 +276,6 @@ if [ -f "/etc/config/${SMB_VERSION}.bak" ]; then
     else
         mv /etc/config/${SMB_VERSION}.bak /etc/config/${SMB_VERSION}
     fi
-else
-    rm -rf /etc/config/${SMB_VERSION}
 fi
 
 if [ -f "/etc/samba/smb.conf.bak" ]; then
@@ -287,8 +284,6 @@ if [ -f "/etc/samba/smb.conf.bak" ]; then
     else
         mv /etc/samba/smb.conf.bak /etc/samba/smb.conf
     fi
-else
-    rm -rf /etc/samba/smb.conf
 fi
 
 
@@ -299,8 +294,6 @@ if [ -f "/etc/config/nfs.bak" ]; then
     else
         mv /etc/config/nfs.bak /etc/config/nfs
     fi
-else
-    rm -rf /etc/config/nfs
 fi
 
 /etc/init.d/samba4 stop
