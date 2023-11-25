@@ -111,13 +111,13 @@ fi
 
 SMB_SETTINGS() {
 # 备份默认配置
-if [ -f "/etc/config/$SMB_VERSION" ]; then
-    cp /etc/config/"$SMB_VERSION" /etc/config/"$SMB_VERSION".bak
-    rm -rf /etc/config/"$SMB_VERSION"
+if [ -f "/etc/config/${SMB_VERSION}" ]; then
+    cp /etc/config/${SMB_VERSION} /etc/config/${SMB_VERSION}.bak
+    rm -rf /etc/config/${SMB_VERSION}
 else
     mkdir -p /etc/config
-    touch /etc/config/"$SMB_VERSION"
-    chmod 600 /etc/config/"$SMB_VERSION"
+    touch /etc/config/${SMB_VERSION}
+    chmod 600 /etc/config/${SMB_VERSION}
 fi
 
 if [ -f "/etc/samba/smb.conf.template" ]; then
