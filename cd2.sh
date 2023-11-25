@@ -40,6 +40,19 @@ if [[ "$os_type" == "Linux" ]]; then
   PINK_COLOR='\e[1;35m'
   SHAN='\e[1;33;5m'
   RES='\e[0m'
+  if command -v docker >/dev/null 2>&1; then
+    check_docker="exist"
+  elif command -v opkg >/dev/null 2>&1; then
+    if [ -e "/sbin/procd" ]; then
+      check_procd="exist"
+    else
+      echo -e "\r\n${RED_COLOR}出错了，无法确定你当前的 Linux 发行版。${RES}\r\n"
+      exit 1
+    fi
+  elif ! command -v systemctl >/dev/null 2>&1; then
+    echo -e "\r\n${RED_COLOR}出错了，无法满足必要的安装条件。${RES}\r\n"
+    exit 1
+  fi
 elif [[ "$os_type" == "Darwin" ]]; then
   echo "当前系统为 macOS"
   os="macos"
@@ -58,6 +71,7 @@ fi
 clear
 
 
+# 架构检查
 # Get platform
 if command -v uname >/dev/null 2>&1; then
   platform=$(uname -m)
@@ -73,43 +87,23 @@ elif [ "$platform" = "aarch64" ]; then
   ARCH=aarch64
 elif [ "$platform" = "armv7l" ]; then
   ARCH=armv7
+else
+  echo -e "\r\n${RED_COLOR}出错了，无法确定你当前的架构${RES}\r\n"
+  exit 1
 fi
 
-if [ "$UID" != "0" ]; then
-  echo -e "\r\n${RED_COLOR}出错了，请使用 root 权限重试！${RES}\r\n" 1>&2
-  exit 1
-elif ! command -v systemctl >/dev/null 2>&1; then
-  if command -v opkg >/dev/null 2>&1; then
-    if command -v docker >/dev/null 2>&1; then
-      check_docker="exist"
-    else
-      if [ -e "/sbin/procd" ]; then
-        check_procd="exist"
-      else
-        echo -e "\r\n${RED_COLOR}出错了，无法确定你当前的 Linux 发行版。${RES}\r\n"
-        exit 1
-      fi
-    fi
-  else
-    echo -e "\r\n${RED_COLOR}出错了，无法确定你当前的 Linux 发行版。${RES}\r\n"
-    exit 1
-  fi
-elif [ "$ARCH" == "UNKNOWN" ]; then
-  echo -e "\r\n${RED_COLOR}出错了${RES}，一键安装目前仅支持 x86_64和arm64 平台。\r\n"
-  exit 1
+# 端口检查
+if command -v netstat >/dev/null 2>&1; then
+  check_port=$(netstat -lnp | grep 19798 | awk '{print $7}' | awk -F/ '{print $1}')
 else
-  if command -v netstat >/dev/null 2>&1; then
+  echo -e "${GREEN_COLOR}端口检查 ... 不同Linux发行版如报错可忽略${RES}"
+  if command -v yum >/dev/null 2>&1; then
+    yum install net-tools -y >/dev/null 2>&1
     check_port=$(netstat -lnp | grep 19798 | awk '{print $7}' | awk -F/ '{print $1}')
   else
-    echo -e "${GREEN_COLOR}端口检查 ... 不同Linux发行版如报错可忽略${RES}"
-    if command -v yum >/dev/null 2>&1; then
-      yum install net-tools -y >/dev/null 2>&1
-      check_port=$(netstat -lnp | grep 19798 | awk '{print $7}' | awk -F/ '{print $1}')
-    else
-      apt-get update >/dev/null 2>&1
-      apt-get install net-tools -y >/dev/null 2>&1
-      check_port=$(netstat -lnp | grep 19798 | awk '{print $7}' | awk -F/ '{print $1}')
-    fi
+    apt-get update >/dev/null 2>&1
+    apt-get install net-tools -y >/dev/null 2>&1
+    check_port=$(netstat -lnp | grep 19798 | awk '{print $7}' | awk -F/ '{print $1}')
   fi
 fi
 
@@ -146,10 +140,8 @@ INSTALL() {
     if [ "$INSTALL_SUCCESS" = "false" ]; then
         echo -e "${RED_COLOR}安装 FUSE3 软件包失败，可能无法挂载${RES}"
     fi
-  fi
-
   # Download macFUSE
-  if [[ "$os_type" == "Darwin" ]]; then
+  elif [[ "$os_type" == "Darwin" ]]; then
     fuse_version=$(curl -s https://api.github.com/repos/osxfuse/osxfuse/releases/latest | grep -Eo '\s\"name\": \"macfuse-.+?\.dmg\"' | awk -F'"' '{print $4}')
     echo -e "\r\n${GREEN_COLOR}下载 macFUSE $VERSION ...${RES}"
     curl -L ${mirror}https://github.com/osxfuse/osxfuse/releases/latest/download/$fuse_version -o /tmp/macfuse.dmg $CURL_BAR
