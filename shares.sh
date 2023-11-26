@@ -128,6 +128,7 @@ SMB_SETTINGS() {
 # 备份默认配置
 if [ -f "/etc/config/${SMB_VERSION}" ]; then
     mv /etc/config/${SMB_VERSION} /etc/config/${SMB_VERSION}.bak
+    touch /etc/config/${SMB_VERSION}
 else
     mkdir -p /etc/config
     touch /etc/config/${SMB_VERSION}
