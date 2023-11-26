@@ -28,11 +28,26 @@ fi
 # 获取挂载路径
 if [ "$check_docker" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Config/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
+  if [ -z "$mount_root_path" ]; then
+    echo -e "${RED_COLOR}网盘未挂载到本地!${RES}"
+    exit 1
+  else
+    if [[ $mount_root_path != /CloudNAS/* ]]; then
+      echo -e "${RED_COLOR}出错,网盘挂载目录非/CloudNAS ${RES}"
+      exit 1
+    fi
+  fi
 elif [ "$check_procd" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Waytech/CloudDrive2/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
-else
-  echo -e "${RED_COLOR}网盘未挂载到本地!${RES}"
-  eixt 1
+  if [ -z "$mount_root_path" ]; then
+    echo -e "${RED_COLOR}网盘未挂载到本地!${RES}"
+    exit 1
+  else
+    if [[ $mount_root_path != /CloudNAS/* ]]; then
+      echo -e "${RED_COLOR}出错,网盘挂载目录非/CloudNAS ${RES}"
+      exit 1
+    fi
+  fi
 fi
 
 get-local-ipv4-using-hostname() {
@@ -112,8 +127,7 @@ fi
 SMB_SETTINGS() {
 # 备份默认配置
 if [ -f "/etc/config/${SMB_VERSION}" ]; then
-    cp /etc/config/${SMB_VERSION} /etc/config/${SMB_VERSION}.bak
-    rm -rf /etc/config/${SMB_VERSION}
+    mv /etc/config/${SMB_VERSION} /etc/config/${SMB_VERSION}.bak
 else
     mkdir -p /etc/config
     touch /etc/config/${SMB_VERSION}
@@ -162,7 +176,7 @@ fi
 
 
 if ! grep -qE "option name 'root'" /etc/config/"$SMB_VERSION" && ! grep -qE "option path '/CloudNAS'" /etc/config/"$SMB_VERSION"; then
-cat << EOF >> /etc/config/"$SMB_VERSION"
+cat << EOF >> /etc/config/${SMB_VERSION}
 config samba
     option charset 'UTF-8'
     option description 'Samba on OpenWRT'
