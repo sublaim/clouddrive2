@@ -198,7 +198,7 @@ config sambashare
 EOF
 fi
 
-/etc/init.d/"$SMB_VERSION" start
+/etc/init.d/"$SMB_VERSION" restart
 /etc/init.d/"$SMB_VERSION" enable
 echo -e "${GREEN_COLOR}SMB 设置完毕${RES}"
 }
