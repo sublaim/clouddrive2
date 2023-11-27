@@ -142,6 +142,7 @@ INSTALL() {
     fi
   # Download macFUSE
   elif [[ "$os_type" == "Darwin" ]]; then
+    if [ ! -f "/Library/Frameworks/macFUSE.framework/Versions/A/macFUSE" ]; then
     fuse_version=$(curl -s https://api.github.com/repos/osxfuse/osxfuse/releases/latest | grep -Eo '\s\"name\": \"macfuse-.+?\.dmg\"' | awk -F'"' '{print $4}')
     echo -e "\r\n${GREEN_COLOR}下载 macFUSE $VERSION ...${RES}"
     curl -L ${mirror}https://github.com/osxfuse/osxfuse/releases/latest/download/$fuse_version -o /tmp/macfuse.dmg $CURL_BAR
@@ -156,6 +157,7 @@ INSTALL() {
     sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
     hdiutil unmount /Volumes/macFUSE
     rm -rf /tmp/macfuse.dmg
+    fi
   fi
   # Download clouddrive2
   clouddrive_version=$(curl -s https://api.github.com/repos/cloud-fs/cloud-fs.github.io/releases/latest | grep -Eo "\s\"name\": \"clouddrive-2-$os-$ARCH-.+?\.tgz\"" | awk -F'"' '{print $4}')
