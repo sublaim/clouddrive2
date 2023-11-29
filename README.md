@@ -166,10 +166,14 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 > *镜像加速优点是不使用代理工具可以运行. 缺点是镜像加速地址经常失效导致命令经常变动.*  
 > *代理优点是命令不会变动. 代理缺点是国内无法直接使用需要改hosts或其它代理的方式才能运行.*  
 
-**cd2安装在了哪里?**  
-> *docker默认挂载点在 /CloudNAS*  
+**cd2安装和挂载到哪里?**  
+> *docker推荐挂载点在 /CloudNAS*  
+> *Mac推荐挂载目录: /Users/你的用户名/Documents*  
 > *安卓默认安装在/data/data/com.termux/files/home/clouddrive/*  
 > *其它平台默认安装在 /opt/clouddrive/*  
+
+**Mac无法挂载到指定目录?**
+> *「系统偏好设置」->「隐私与安全性」->「完全磁盘访问」->「勾选clouddrive」*
 
 **怎么修改默认的SMB密码?**  
 > *smbpasswd -a root*  
@@ -194,6 +198,9 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 
 **IO error fusemount run failed**  
 > *ls /dev/fuse | grep fuse 如果没有没输出则是缺少fuse模块*  
+
+**Mac为什么只能读不能写入文件?**
+> *挂载到本地时把默认的0755改成0777*
 
 **重启后 docker 上的 cd2 容器没有自动运行**  
 > *把 mount --make-shared / 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前*  
