@@ -3,8 +3,8 @@
 # INSTALL_PATH='/opt/clouddrive'
 chmod +x "$0"
 if [[ $EUID -ne 0 ]]; then
-    echo -e "${YELLOW_COLOR}当前操作需要 root 权限，请输入您的密码后回车${RES}"
-    exec sudo bash "$0" "$@"
+    echo -e "${YELLOW_COLOR}非 root 用户，请用 sudo -i 切换${RES}"
+    exit 1
 fi
 
 VERSION='latest'
@@ -143,20 +143,20 @@ INSTALL() {
   # Download macFUSE
   elif [[ "$os_type" == "Darwin" ]]; then
     if [ ! -f "/Library/Frameworks/macFUSE.framework/Versions/A/macFUSE" ]; then
-    fuse_version=$(curl -s https://api.github.com/repos/osxfuse/osxfuse/releases/latest | grep -Eo '\s\"name\": \"macfuse-.+?\.dmg\"' | awk -F'"' '{print $4}')
-    echo -e "\r\n${GREEN_COLOR}下载 macFUSE $VERSION ...${RES}"
-    curl -L ${mirror}https://github.com/osxfuse/osxfuse/releases/latest/download/$fuse_version -o /tmp/macfuse.dmg $CURL_BAR
-    sudo spctl --master-disable
-    if [ $? -eq 0 ]; then
-      echo -e "macFUSE 下载完成"
-    else
-      echo -e "${RED_COLOR}网络中断，请检查网络${RES}"
-      exit 1
-    fi
-    hdiutil mount /tmp/macfuse.dmg
-    sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
-    hdiutil unmount /Volumes/macFUSE
-    rm -rf /tmp/macfuse.dmg
+      fuse_version=$(curl -s https://api.github.com/repos/osxfuse/osxfuse/releases/latest | grep -Eo '\s\"name\": \"macfuse-.+?\.dmg\"' | awk -F'"' '{print $4}')
+      echo -e "\r\n${GREEN_COLOR}下载 macFUSE $VERSION ...${RES}"
+      curl -L ${mirror}https://github.com/osxfuse/osxfuse/releases/latest/download/$fuse_version -o /tmp/macfuse.dmg $CURL_BAR
+      sudo spctl --master-disable
+      if [ $? -eq 0 ]; then
+        echo -e "macFUSE 下载完成"
+      else
+        echo -e "${RED_COLOR}网络中断，请检查网络${RES}"
+        exit 1
+      fi
+      hdiutil mount /tmp/macfuse.dmg
+      installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
+      hdiutil unmount /Volumes/macFUSE
+      rm -rf /tmp/macfuse.dmg
     fi
   fi
   # Download clouddrive2
@@ -303,7 +303,7 @@ EOF
   systemctl enable clouddrive >/dev/null 2>&1
   fi
 elif [[ "$os_type" == "Darwin" ]]; then
-  cat >$HOME/Library/LaunchAgents/clouddrive.plist <<EOF
+  cat >/Library/LaunchDaemons/clouddrive.plist <<EOF
   <?xml version="1.0" encoding="UTF-8"?>
   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
   <plist version="1.0">
@@ -325,8 +325,8 @@ elif [[ "$os_type" == "Darwin" ]]; then
       </dict>
   </plist>
 EOF
-  launchctl load $HOME/Library/LaunchAgents/clouddrive.plist
-  launchctl start $HOME/Library/LaunchAgents/clouddrive.plist
+  launchctl load -w /Library/LaunchDaemons/clouddrive.plist
+  launchctl start /Library/LaunchDaemons/clouddrive.plist
 fi
 }
 
@@ -353,11 +353,10 @@ UNINSTALL() {
     echo -e "\r\n${GREEN_COLOR}卸载 clouddrive2 ...${RES}\r\n"
     echo -e "${GREEN_COLOR}停止进程${RES}"
     if [[ "$os_type" == "Darwin" ]]; then
-      launchctl unload $HOME/Library/LaunchAgents/clouddrive.plist >/dev/null 2>&1
-      launchctl stop $HOME/Library/LaunchAgents/clouddrive.plist >/dev/null 2>&1
+      launchctl stop /Library/LaunchDaemons/clouddrive.plist >/dev/null 2>&1
+      launchctl unload -w /Library/LaunchDaemons/clouddrive.plist >/dev/null 2>&1
       echo -e "${GREEN_COLOR}清除残留文件${RES}"
-      rm -rf $INSTALL_PATH $HOME/Library/LaunchAgents/clouddrive.plist
-      launchctl load $HOME/Library/LaunchAgents/clouddrive.plist >/dev/null 2>&1
+      rm -rf $INSTALL_PATH /Library/LaunchDaemons/clouddrive.plist >/dev/null 2>&1
     else
       if [[ "$check_procd" == "exist" ]]; then
         /etc/init.d/clouddrive stop
