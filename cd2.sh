@@ -85,6 +85,8 @@ if [ "$platform" = "x86_64" ]; then
   ARCH=x86_64
 elif [ "$platform" = "aarch64" ]; then
   ARCH=aarch64
+elif [ "$platform" = "arm64" ]; then
+  ARCH=aarch64
 elif [ "$platform" = "armv7l" ]; then
   ARCH=armv7
 else
