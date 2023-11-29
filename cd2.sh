@@ -3,7 +3,7 @@
 # INSTALL_PATH='/opt/clouddrive'
 chmod +x "$0"
 if [[ $EUID -ne 0 ]]; then
-    echo -e "${YELLOW_COLOR}非 root 用户，请用 sudo -i 切换${RES}"
+    echo -e "非 root 用户，请用 sudo -i 切换并输入密码"
     exit 1
 fi
 
@@ -106,6 +106,8 @@ else
     check_port=$(netstat -lnp | grep 19798 | awk '{print $7}' | awk -F/ '{print $1}')
   fi
 fi
+
+clear
 
 CHECK() {
   if [ -f "$INSTALL_PATH/clouddrive" ]; then
