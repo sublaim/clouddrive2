@@ -147,7 +147,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh
 Linux 桌面环境下的「终端」名称不同, 可自行查找
 
 ### 安卓
-打开「Termux」输入命令
+打开「Termux」输入命令并回车
 
 <img src="./images/termux.png" width="20%">
 
@@ -161,10 +161,13 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 > *代理优点是命令不会变动. 代理缺点是国内无法直接使用需要改hosts或其它代理的方式才能运行.*  
 
 **cd2安装和挂载到哪里?**  
-> *docker推荐挂载点在 /CloudNAS*  
-> *Mac推荐挂载目录: /Users/你的用户名/Documents*  
 > *安卓默认安装在/data/data/com.termux/files/home/clouddrive/*  
 > *其它平台默认安装在 /opt/clouddrive/*  
+
+> *docker推荐挂载点在 /CloudNAS*  
+> *Mac推荐挂载点: /Users/你的用户名/Documents*  
+> *安卓推荐挂载点: /mnt/runtime/default/emulated/0/你的目录 (注:此目录更容易被新手找到,可读不可写,若想读写可把挂载时权限的`0755`改`0777`)*  
+> *安卓推荐挂载点: /mnt/runtime (注:可读写)*  
 
 **Mac无法挂载到指定目录?**
 > *「系统偏好设置」->「隐私与安全性」->「完全磁盘访问」->「勾选clouddrive」*

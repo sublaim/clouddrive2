@@ -174,7 +174,7 @@ EOF
 SUCCESS() {
   clear
   echo -e "${GREEN_COLOR}clouddrive2 安装成功！${RES}"
-  echo -e "${YELLOW_COLOR}重启 termux 后生效${RES}"
+  echo -e "${YELLOW_COLOR}重启 termux 后生效, 使用时需要保持 termux 运行${RES}"
   echo -e "访问地址：${GREEN_COLOR}http://$(get-local-ipv4-select):19798/${RES}\r\n"
 }
 
