@@ -194,7 +194,7 @@ DOCKER() {
     echo -e "${RED_COLOR}校验/dev/fuse失败，可能无法挂载网盘${RES}"
   fi
   if command -v opkg >/dev/null 2>&1; then
-    if ! grep -q "mount --make-shared /" "/etc/rc.local"; then
+    if ! grep -q "^mount --make-shared \/$" "/etc/rc.local"; then
       sed -i '/exit 0/i\mount --make-shared /' "/etc/rc.local"
     fi
   fi
