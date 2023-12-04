@@ -184,6 +184,12 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 **curl: (35) Recv failure: Connection reset by peer**  
 > *重启「终端」*  
 
+**一直卡在 正在下载 clouddrive 镜像，请稍候...**  
+尝试以下方式解决:  
+> *1. 关闭代理包括手机上*  
+> *2. 重启dns服务: /etc/init.d/dnsmasq restart*  
+> *3. 更换docker配置中的镜像地址由百度换成网易*  
+
 **docker: Error response from daemon: path /CloudAS is mounted on/ but it is nota shared mount.**  
 > *把 `mount --make-shared /` 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前*  
 
