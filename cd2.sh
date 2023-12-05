@@ -199,11 +199,6 @@ DOCKER() {
     fi
   fi
 
-  if ! grep -q "mount --make-shared /" /etc/rc.local; then
-      echo -e "${RED_COLOR}出错了${RES}"
-      echo -e "${RED_COLOR}请手动把 'mount --make-shared /' 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前,再重试${RES}"
-      exit 1
-  fi
 
   # run docker
   if [ "$check_docker" == "exist" ]; then

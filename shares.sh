@@ -29,22 +29,22 @@ fi
 if [ "$check_docker" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Config/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
   if [ -z "$mount_root_path" ]; then
-    echo -e "${RED_COLOR}网盘未挂载到本地!${RES}"
+    echo -e "${RED_COLOR}出错了, 网盘未挂载到本地! 请先把网盘挂载到/CloudNAS${RES}"
     exit 1
   else
     if [[ $mount_root_path != /CloudNAS/* ]]; then
-      echo -e "${RED_COLOR}出错,网盘挂载目录非/CloudNAS ${RES}"
+      echo -e "${RED_COLOR}出错了,网盘挂载目录非/CloudNAS ${RES}"
       exit 1
     fi
   fi
 elif [ "$check_procd" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Waytech/CloudDrive2/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
   if [ -z "$mount_root_path" ]; then
-    echo -e "${RED_COLOR}网盘未挂载到本地!${RES}"
+    echo -e "${RED_COLOR}出错了, 网盘未挂载到本地! 请先把网盘挂载到/CloudNAS${RES}"
     exit 1
   else
     if [[ $mount_root_path != /CloudNAS/* ]]; then
-      echo -e "${RED_COLOR}出错,网盘挂载目录非/CloudNAS ${RES}"
+      echo -e "${RED_COLOR}出错了, 网盘挂载目录非/CloudNAS ${RES}"
       exit 1
     fi
   fi
