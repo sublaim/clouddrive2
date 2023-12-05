@@ -163,6 +163,37 @@ INSTALL() {
       rm -rf /tmp/macfuse.dmg
     fi
   fi
+  # 定义要安装的软件包名称
+  package_name="fuse3"
+  
+  # 检测发行版并安装相应的软件包
+  if [ -f /etc/os-release ]; then
+      # 包含发行版识别信息的文件
+      . /etc/os-release
+      
+      case $ID in
+          ubuntu)
+              # 对于基于 Debian 的系统
+              apt-get update
+              apt-get install -y $package_name
+              ;;
+          centos)
+              # 对于 CentOS
+              yum install -y $package_name
+              ;;
+          arch|manjaro)
+              # 对于 Arch Linux 或 Manjaro
+              pacman -Syu $package_name
+              ;;
+          *)
+              echo -e "${RED_COLOR}未知: $ID, 可能无法挂载${RES}"
+              ;;
+      esac
+  else
+      echo -e "${RED_COLOR}未知: $ID, 可能无法挂载${RES}"
+  fi
+
+
   # Download clouddrive2
   clouddrive_version=$(curl -s https://api.github.com/repos/cloud-fs/cloud-fs.github.io/releases/latest | grep -Eo "\s\"name\": \"clouddrive-2-$os-$ARCH-.+?\.tgz\"" | awk -F'"' '{print $4}')
   echo -e "\r\n${GREEN_COLOR}下载 clouddrive2 $VERSION ...${RES}"
