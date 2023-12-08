@@ -374,7 +374,7 @@ SUCCESS() {
   clear
   echo -e "${GREEN_COLOR}clouddrive2 安装成功！${RES}"
   if [ -n "$public_ipv4" ]; then
-    echo -e "公网访问地址：${GREEN_COLOR}http://$(public_ipv4):19798/${RES}\r\n"
+    echo -e "公网访问地址：${GREEN_COLOR}http://$public_ipv4:19798/${RES}"
   fi 
   echo -e "内网访问地址：${GREEN_COLOR}http://$(get-local-ipv4-select):19798/${RES}\r\n"
 }
