@@ -172,7 +172,7 @@ INSTALL() {
       . /etc/os-release
       
       case $ID in
-          ubuntu)
+          ubuntu|debian)
               # 对于基于 Debian 的系统
               apt-get update
               apt-get install -y $package_name
@@ -289,6 +289,16 @@ get-local-ipv4-select() {
   head -n 1 <<<"$ips"
 }
 
+# 获取公网IP
+get_public_ipv4() {
+  curl -s ifconfig.me/ip | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'
+}
+
+public_ipv4=$(get_public_ipv4)
+
+
+
+
 DAEMON() {
 if [[ "$os_type" == "Linux" ]]; then
   if [[ "$check_procd" == "exist" ]]; then
@@ -363,7 +373,10 @@ fi
 SUCCESS() {
   clear
   echo -e "${GREEN_COLOR}clouddrive2 安装成功！${RES}"
-  echo -e "访问地址：${GREEN_COLOR}http://$(get-local-ipv4-select):19798/${RES}\r\n"
+  if [ -n "$public_ipv4" ]; then
+    echo -e "公网访问地址：${GREEN_COLOR}http://$(public_ipv4):19798/${RES}\r\n"
+  fi 
+  echo -e "内网访问地址：${GREEN_COLOR}http://$(get-local-ipv4-select):19798/${RES}\r\n"
 }
 
 UNINSTALL() {
