@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # 本脚本必须配合一键安装 clouddrive 脚本才有效
 # https://github.com/sublaim/clouddrive2
-# chmod +x "$0" > /dev/null
+chmod +x "$0"
+
 RED_COLOR='\e[1;31m'
 GREEN_COLOR='\e[1;32m'
 YELLOW_COLOR='\e[1;33m'
@@ -113,7 +114,7 @@ if [[ -f "/etc/init.d/ksmbd" ]]; then
   {
     echo "$password"
     echo "$password"
-  } | ksmbd.adduser -a smb > /dev/null
+  } | ksmbd.adduser -a smb
   
   if [ $? -eq 0 ]; then
     echo -e "${GREEN_COLOR}设置密码成功${RES}"
@@ -170,7 +171,7 @@ if [[ -f "/etc/init.d/samba" || -f "/etc/init.d/samba4" ]]; then
   {
     echo "$password"
     echo "$password"
-  } | smbpasswd -a root > /dev/null
+  } | smbpasswd -a root
   
   if [ $? -eq 0 ]; then
     echo -e "${GREEN_COLOR}设置密码成功${RES}"
@@ -256,6 +257,7 @@ fi
 if [ -f "/etc/samba/smb.conf" ]; then
   if ! [ -f "/etc/samba/smb.conf.bak" ]; then
     cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+    ln -sf /var/etc/smb.conf /etc/samba/smb.conf
   fi
 fi
 }
@@ -275,7 +277,7 @@ fi
 
 # sabma and samba4
 if [[ -f "/etc/init.d/samba" ]]; then
-    SMB_VERSION="samba"
+  SMB_VERSION="samba"
 elif [[ -f "/etc/init.d/samba4" ]]; then
   SMB_VERSION="samba4"
 fi
@@ -301,9 +303,11 @@ fi
 if [ -f "/etc/samba/smb.conf.bak" ]; then
   if ! [ -f "/etc/samba/smb.conf" ]; then
     mv /etc/samba/smb.conf.bak /etc/samba/smb.conf
+    ln -sf /var/etc/smb.conf /etc/samba/smb.conf
   else
     rm -rf /etc/samba/smb.conf
     mv /etc/samba/smb.conf.bak /etc/samba/smb.conf
+    ln -sf /var/etc/smb.conf /etc/samba/smb.conf
   fi
 fi
 
