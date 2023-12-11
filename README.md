@@ -176,10 +176,16 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 > *smbpasswd -a root*  
 
 ### 安装问题  
-**-ash: bash: not found**  
+**-ash: bash: not found or curl: not found**  
 **curl: (23) Failure writing output to destination**  
 > *多出现在 GL.iNet 品牌下的 MTxxxx设备上.*  
-> *使用 opkg install bash 安装bash即可*  
+> *使用 opkg install bash curl安装bash即可*  
+
+**curl: (6) Could not resolve host: mirror.ghproxy.com**  
+> *DNS设置问题*  
+
+**curl: (7) Failed to connect to mirror.ghproxy.com port 443 after 10 ms: Couldn't connect to server**  
+> *网关设置问题*  
 
 **curl: (35) Recv failure: Connection reset by peer**  
 > *重启「终端」*  
