@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 本脚本必须配合一键安装 clouddrive 脚本才有效
 # https://github.com/sublaim/clouddrive2
-chmod +x "$0" > /dev/null
+# chmod +x "$0" > /dev/null
 RED_COLOR='\e[1;31m'
 GREEN_COLOR='\e[1;32m'
 YELLOW_COLOR='\e[1;33m'
@@ -409,8 +409,7 @@ echo -e "\r\n${GREEN_COLOR}SMB/NFS共享已在系统中还原！${RES}\r\n"
 SUCCESS() {
 clear
 # SMB
-echo -e "${GREEN_COLOR}IP 请以实际为准${RES}\r\n"
-echo -e "${GREEN_COLOR}请用您的设备连接以下可用的共享服务${RES}\r\n"
+echo -e "${GREEN_COLOR}请用您的设备连接以下可用的共享服务(请以实际IP为准)${RES}\r\n"
 if [ "$SMB_EXIST" = "no" ]; then
   echo -e "${GREEN_COLOR}SMB 设置失败:${RES}"
   echo -e "${RED_COLOR}失败原因: 没有找到 SMB 服务${RES}"
