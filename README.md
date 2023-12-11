@@ -1,12 +1,13 @@
 
 # 通知
-2023年11月21日之前的命令由于更换镜像地址已无法使用.  
+## **2023年11月21日之前的命令由于更换镜像地址已无法使用.**  
 
 # 一键安装 Clouddrive2 脚本
 脚本非官方出品，由于官方帮助不适合新手故写此脚本。指在帮助新手用户快速使用 clouddrive2 挂载网盘。
 
 ## 目录
 - [通知](#通知)
+  - [**2023年11月21日之前的命令由于更换镜像地址已无法使用.**](#2023年11月21日之前的命令由于更换镜像地址已无法使用)
 - [一键安装 Clouddrive2 脚本](#一键安装-clouddrive2-脚本)
   - [目录](#目录)
   - [安装](#安装)
@@ -18,7 +19,7 @@
     - [卸载](#卸载)
   - [一键开启 SMB 与 NFS 共享](#一键开启-smb-与-nfs-共享)
     - [共享](#共享)
-    - [取消共享](#取消共享)
+    - [还原共享](#还原共享)
   - [如何更新?](#如何更新)
   - [在哪运行？](#在哪运行)
     - [OpenWRT](#openwrt)
@@ -49,7 +50,7 @@
 - 优先使用 docker 的安装方式.如果没有docker会使用其它方式安装  
 
 ```shell
-# 国内镜像加速
+# 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install
@@ -57,7 +58,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" |
 
 ### 卸载命令
 ```shell
-# 国内镜像加速
+# 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s uninstall
@@ -69,7 +70,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" |
 ### 安装 (未ROOT设备)
 - 以下命令2选1  
 ```shell
-# 镜像加速
+# 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install
@@ -78,7 +79,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 ### 安装 (已ROOT设备)
 - 以下命令2选1  
 ```shell
-# 镜像加速
+# 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root mirror
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s install root
@@ -87,7 +88,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 ### 卸载
 - 以下命令2选1  
 ```shell
-# 镜像加速
+# 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termux.sh" | bash -s uninstall
@@ -101,16 +102,16 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 ### 共享
 - 以下命令2选1  
 ```shell
-# 国内镜像加速
+# 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
 ```
 
-### 取消共享
+### 还原共享
 - 以下命令2选1  
 ```shell
-# 国内镜像加速
+# 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
 # 代理
 curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
@@ -195,9 +196,6 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 > *1. 关闭代理包括手机上*  
 > *2. 重启dns服务: /etc/init.d/dnsmasq restart*  
 > *3. 更换docker配置中的镜像地址由百度换成网易*  
-
-**docker: Error response from daemon: path /CloudAS is mounted on/ but it is nota shared mount.**  
-> *把 `mount --make-shared /` 插入到「启动项」->「本地启动脚本」中的 'exit 0' 之前*  
 
 ### 安装后问题
 **IO Error find fusermount binary failed CannotFindBinaryPath**  
