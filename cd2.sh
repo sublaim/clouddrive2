@@ -225,8 +225,8 @@ DOCKER() {
     echo -e "${RED_COLOR}校验/dev/fuse失败，可能无法挂载网盘${RES}"
   fi
   if command -v opkg >/dev/null 2>&1; then
-    if ! grep -q "^mount --make-shared \/$" "/etc/rc.local"; then
-      sed -i '/exit 0/i\mount --make-shared /' "/etc/rc.local"
+    if ! grep -q "^(sleep 10; exportfs -r) &$" "/etc/rc.local"; then
+      sed -i '/exit 0/i\(sleep 10; exportfs -r) &' "/etc/rc.local"
     fi
   fi
 
@@ -289,7 +289,7 @@ get-local-ipv4-select() {
   head -n 1 <<<"$ips"
 }
 
-# 获取公网IP
+# 获取外网IP
 get_public_ipv4() {
   curl -s ifconfig.me/ip | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'
 }
@@ -372,9 +372,10 @@ fi
 
 SUCCESS() {
   clear
-  echo -e "${GREEN_COLOR}clouddrive2 安装成功！${RES}"
+  echo -e "${GREEN_COLOR}clouddrive2 安装成功！${RES}\r\n"
+  echo -e "${GREEN_COLOR}IP 地址请以实际为准${RES}"
   if [ -n "$public_ipv4" ]; then
-    echo -e "公网访问地址：${GREEN_COLOR}http://$public_ipv4:19798/${RES}"
+    echo -e "外网访问地址：${GREEN_COLOR}http://$public_ipv4:19798/${RES}"
   fi 
   echo -e "内网访问地址：${GREEN_COLOR}http://$(get-local-ipv4-select):19798/${RES}\r\n"
 }
