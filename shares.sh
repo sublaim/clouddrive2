@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 本脚本必须配合一键安装 clouddrive 脚本才有效
 # https://github.com/sublaim/clouddrive2
-chmod +x "$0"
+chmod +x "$0" > /dev/null
 RED_COLOR='\e[1;31m'
 GREEN_COLOR='\e[1;32m'
 YELLOW_COLOR='\e[1;33m'
