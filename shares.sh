@@ -30,19 +30,19 @@ fi
 if [ "$check_docker" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Config/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
   if [ -z "$mount_root_path" ]; then
-    echo -e "${RED_COLOR}出错了, 网盘未挂载到本地! 请先把网盘挂载到/CloudNAS${RES}"
-    echo -e "${RED_COLOR}只挂载 webdav 则至少需要挂载一个网盘${RES}"
+    echo -e "${RED_COLOR}出错了, 请先把cd2中的网盘挂载到本地/CloudNAS目录${RES}"
+    echo -e "${RED_COLOR}如果只挂载 webdav 则至少需要在cd2中挂载一个网盘${RES}"
     exit 1
   else
     if [[ $mount_root_path != /CloudNAS/* ]]; then
-      echo -e "${RED_COLOR}出错了,网盘挂载目录非/CloudNAS ${RES}"
+      echo -e "${RED_COLOR}出错了,网盘挂载目录非/CloudNAS${RES}"
       exit 1
     fi
   fi
 elif [ "$check_procd" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Waytech/CloudDrive2/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
   if [ -z "$mount_root_path" ]; then
-    echo -e "${RED_COLOR}出错了, 网盘未挂载到本地! 请先把网盘挂载到/CloudNAS${RES}"
+    echo -e "${RED_COLOR}出错了, 网盘未挂载到本地! 请先把cd2中的网盘挂载到/CloudNAS目录${RES}"
     exit 1
   else
     if [[ $mount_root_path != /CloudNAS/* ]]; then
@@ -419,7 +419,7 @@ if [ "$SMB_EXIST" = "no" ]; then
   echo -e "${RED_COLOR}失败原因: 没有找到 SMB 服务${RES}"
 else
   if [ "$KSMBD" = "yes" ] && [ "$SAMBA" = "yes" ]; then
-    echo -e "${GREEN_COLOR}系统有多种 SMB 协议:${RES}"
+    echo -e "${GREEN_COLOR}系统有多种 SMB 协议, 建议停用一种:${RES}"
   fi
   if [ "$KSMBD" = "yes" ]; then
     echo -e "${GREEN_COLOR}SMB 设置成功:${RES}"
