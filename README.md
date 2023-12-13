@@ -203,6 +203,9 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 > *OP使用opkg update && opkg install fuse3-utils libfuse3-3 安装.*  
 > *Linux因各发行版不同自行安装*  
 
+**出错了, 请先把cd2中的网盘挂载到本地/CloudNAS目录**  
+> *在cd2后台挂载你的网盘到本地*  
+
 **IO error fusemount run failed**  
 > *ls /dev/fuse | grep fuse 如果没有没输出则是缺少fuse模块*  
 

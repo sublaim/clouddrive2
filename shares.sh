@@ -31,7 +31,7 @@ if [ "$check_docker" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Config/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
   if [ -z "$mount_root_path" ]; then
     echo -e "${RED_COLOR}出错了, 请先把cd2中的网盘挂载到本地/CloudNAS目录${RES}"
-    echo -e "${RED_COLOR}如果只挂载 webdav 则至少需要在cd2中挂载一个网盘${RES}"
+    echo -e "${RED_COLOR}如果只挂载 webdav 则至少需要在cd2中挂载一个网盘(不挂载webdav可忽略)${RES}"
     exit 1
   else
     if [[ $mount_root_path != /CloudNAS/* ]]; then
@@ -42,7 +42,7 @@ if [ "$check_docker" = "exist" ]; then
 elif [ "$check_procd" = "exist" ]; then
   mount_root_path=$(grep -A1 "source_path\s*=\s*\"/\"" /Waytech/CloudDrive2/config.toml | grep "mount_point" | awk -F'["]' '{print $2}')
   if [ -z "$mount_root_path" ]; then
-    echo -e "${RED_COLOR}出错了, 网盘未挂载到本地! 请先把cd2中的网盘挂载到/CloudNAS目录${RES}"
+    echo -e "${RED_COLOR}出错了, 请先把cd2中的网盘挂载到本地/CloudNAS目录${RES}"
     exit 1
   else
     if [[ $mount_root_path != /CloudNAS/* ]]; then
