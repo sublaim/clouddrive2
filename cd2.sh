@@ -235,6 +235,7 @@ DOCKER() {
   if [ "$check_docker" == "exist" ]; then
     mount --make-shared /
     echo -e "${GREEN_COLOR}正在下载 clouddrive 镜像，请稍候...${RES}"
+    mkdir -p /CloudNAS /Config /media
     docker pull cloudnas/clouddrive2:latest 
     docker run -d \
     --name clouddrive \
