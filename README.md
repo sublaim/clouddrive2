@@ -49,6 +49,7 @@
 - 镜像加速和代理的区别? [点击查看](#通规问题)  
 - 由于镜像站经常被墙或其它原因经常变动导致无法使用请用下面的「代理」命令,前提是你有开了代理  
 - 优先使用 docker 的安装方式.如果没有docker会使用其它方式安装  
+- 以下命令2选1  
 
 ```shell
 # 国内加速(推荐)
@@ -97,6 +98,7 @@ curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2-termu
 
 ## 一键开启 SMB 与 NFS 共享
 - **前提是使用一键安装脚本安装的 cd2 且网盘挂载目录为/CloudNAS**  
+- 官方自带了 webdav 的方式 [点击查看](###安装后问题)  
 - 只支持 Openwrt 系列及其衍生版, 大部分设备可以开启 SMB, NFS能不能开启看固件  
 - GL.iNET 设备需要提前在主路由界面 -> 应用程序 -> 网络共享或文件共享 -> 开启 samba  
 
@@ -231,13 +233,19 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 **怎么开启SMB V1版本兼容**  
 > *默认支持兼容v1等低版本协议*  
 
+**官方自带的 webdav 服务**  
+> *服务器：http://<ip>:19798/dav*  
+> *用户名：登录CloudDrive的用户Email，或者只填用户Email的用户名部分，不含@及以后的部分*  
+> *密码：登录CloudDrive的用户密码*  
+
+
 ### 安卓问题
 **为什么 termux 无法挂载网盘到本地？**  
 > *非Root用户无法挂载。*  
 
 **已root设备 termux 挂载目录为空**  
 > *尝试将 termux 在 SuperUser 类的权限管理工具中来允许获得root权限*  
-> *关闭 termux 电池省电策略*  
+> *调整 termux 电池省电策略*  
 > *检查 termux 进程是否被杀*  
 
 **非 root 设备可以用 root 命令吗？**  

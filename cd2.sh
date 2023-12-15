@@ -252,7 +252,7 @@ DOCKER() {
     if [ $? -eq 0 ]; then
       echo -e "${GREEN_COLOR}clouddrive 容器已成功运行${RES}"
     else
-      echo -e "${RED_COLOR}clouddrive 容器未能成功运行${RES}"
+      echo -e "${RED_COLOR}clouddrive 容器未能成功运行,请检查是否存在旧容器冲突${RES}"
       exit 1
     fi
   fi
