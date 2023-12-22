@@ -1,7 +1,3 @@
-
-# 通知
-## **2023年11月21日之前的命令由于更换镜像地址已无法使用.**  
-
 # 一键安装 Clouddrive2 脚本
 脚本非官方出品。指在帮助纯新手用户快速使用 clouddrive2 挂载网盘。  
 脚本中使用的docker镜像与二进制文件均从官方 hub 及 github 仓库下载，请放心使用。
@@ -37,10 +33,8 @@
 支持
 - [X] Linux
 - [X] MacOS
-- [X] OpenWRT
+- [X] OpenWRT(iStore)
 - [X] Android-Termux
-- [X] 理论上支持所有安装了 docker 的设备如: iStore OS
-- [X] 理论上支持所有 OpenWRT 及其衍生的系统
 
 ## 安装
 ### 安装命令
