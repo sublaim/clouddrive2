@@ -147,7 +147,7 @@ docker_install() {
 run_clouddrive_docker() {
 	echo -e "${tty_green}正在下载 clouddrive 镜像，请稍候...${tty_reset}"
 	mkdir -p "${cloudnas_dir}" "${config_dir}" "${media_dir}"
-	docker pull "${mirror}"cloudnas/clouddrive2:"${install_version}"
+	docker pull "${docker_mirror}"cloudnas/clouddrive2:"${install_version}"
 	docker run -d \
 		--name clouddrive \
 		--restart unless-stopped \
@@ -159,7 +159,7 @@ run_clouddrive_docker() {
 		--pid host \
 		--privileged \
 		--device /dev/fuse:/dev/fuse \
-		"${mirror}"cloudnas/clouddrive2:"${install_version}"
+		"${docker_mirror}"cloudnas/clouddrive2:"${install_version}"
 	if [ $? -eq 0 ]; then
 		echo -e "${tty_green}clouddrive 容器已成功运行${tty_reset}"
 	else
@@ -171,6 +171,7 @@ run_clouddrive_docker() {
 # 设置默认值
 default_value() {
 	mirror=${mirror:-https://mirro.ghproxy.com/}
+	docker_mirror=${mirror:-ghproxy.com/}
 	user_install_path=${user_install_path:-/opt/clouddrive}
 	install_version=${install_version:-latest}
 	cloudnas_dir=${cloudnas_dir:-/CloudNAS}
@@ -534,7 +535,7 @@ select_fast_mirror() {
 		mirror="https://mirror.ghproxy.com/"
 		;;
 	"2")
-		mirror="dockerproxy.com/"
+		docker_mirror="dockerproxy.com/"
 		;;
 	"3")
 		mirror=""
