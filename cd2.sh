@@ -118,6 +118,7 @@ binary_install() {
 # docker 安装
 docker_install() {
 	if [ -z "$media_dir" ]; then
+		select_fast_mirror
 		select_version
 		select_docker_path
 	fi
@@ -539,6 +540,7 @@ select_fast_mirror() {
 		;;
 	"3")
 		mirror=""
+		docker_mirror=""
 		;;
 	*)
 		echo -n "${tty_red}
