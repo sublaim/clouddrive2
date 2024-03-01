@@ -525,20 +525,17 @@ select_fast_mirror() {
 	echo -n "${tty_green}
   请选择加速通道：${tty_reset}" | sed 's/^\s\{2\}//'
 	echo -n "${tty_cyan}
-    1、二进制下载加速（一）
-    2、docker下载加速（一）
-    3、不加速 ${tty_reset}" | sed 's/^\s\{2\}//'
+    1、加速
+    2、不加速 ${tty_reset}" | sed 's/^\s\{2\}//'
 	echo -n "${tty_yellow}
   请输入序号并回车: ${tty_reset}" | sed 's/^\s\{2\}//'
 	read FAST_NUM
 	case $FAST_NUM in
 	"1")
 		mirror="https://mirror.ghproxy.com/"
-		;;
-	"2")
 		docker_mirror="dockerproxy.com/"
 		;;
-	"3")
+	"2")
 		mirror=""
 		docker_mirror=""
 		;;
