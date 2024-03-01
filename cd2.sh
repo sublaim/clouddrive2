@@ -146,7 +146,7 @@ docker_install() {
 
 run_clouddrive_docker() {
 	echo -e "${tty_green}正在下载 clouddrive 镜像，请稍候...${tty_reset}"
-	mkdir -p "${cloudnas}" "${config_dir}" "${media_dir}"
+	mkdir -p "${cloudnas_dir}" "${config_dir}" "${media_dir}"
 	docker pull "${mirror}"cloudnas/clouddrive2:"${install_version}"
 	docker run -d \
 		--name clouddrive \
