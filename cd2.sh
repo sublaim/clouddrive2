@@ -171,7 +171,7 @@ run_clouddrive_docker() {
 # 设置默认值
 default_value() {
 	mirror=${mirror:-https://mirro.ghproxy.com/}
-	docker_mirror=${docker_mirror:-dockerghproxy.com/}
+	docker_mirror=${docker_mirror:-}
 	user_install_path=${user_install_path:-/opt/clouddrive}
 	install_version=${install_version:-latest}
 	cloudnas_dir=${cloudnas_dir:-/CloudNAS}
