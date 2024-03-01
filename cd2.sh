@@ -67,6 +67,7 @@ esac
 
 # 一键快速安装
 fast_install() {
+	default_value
 	if [[ $system_os == "openwrt" ]] && command -v docker >/dev/null 2>&1; then
 		docker_install
 	else
@@ -86,23 +87,21 @@ fast_install() {
 
 # 二进制安装
 binary_install() {
+	default_value
 	case $system_os in
 	"linux")
-		default_value
 		download_clouddrive_binary
 		binary_install_fuse3
 		DAEMON
 		SUCCESS
 		;;
 	"openwrt")
-		default_value
 		download_clouddrive_binary
 		binary_install_fuse3
 		DAEMON
 		SUCCESS
 		;;
 	"macos")
-		default_value
 		download_clouddrive_binary
 		binary_install_fuse3
 		DAEMON
@@ -118,6 +117,10 @@ binary_install() {
 
 # docker 安装
 docker_install() {
+	if [ -z "$media_dir" ]; then
+		select_version
+		select_docker_path
+	fi
 	case $system_os in
 	"openwrt")
 		if ! grep -q "^mount --make-shared \/$" "/etc/rc.local"; then
@@ -143,20 +146,20 @@ docker_install() {
 
 run_clouddrive_docker() {
 	echo -e "${tty_green}正在下载 clouddrive 镜像，请稍候...${tty_reset}"
-	mkdir -p /CloudNAS /Config /media
-	docker pull cloudnas/clouddrive2:latest
+	mkdir -p "${cloudnas}" "${config_dir}" "${media_dir}"
+	docker pull "${mirror}"cloudnas/clouddrive2:"${install_version}"
 	docker run -d \
 		--name clouddrive \
 		--restart unless-stopped \
 		--env CLOUDDRIVE_HOME=/Config \
-		-v /CloudNAS:/CloudNAS:shared \
-		-v /Config:/Config \
-		-v /media:/media:shared \
+		-v "${cloudnas_dir}":/CloudNAS:shared \
+		-v "${config_dir}":/Config \
+		-v "${media_dir}":/media:shared \
 		--network host \
 		--pid host \
 		--privileged \
 		--device /dev/fuse:/dev/fuse \
-		cloudnas/clouddrive2:latest
+		"${mirror}"cloudnas/clouddrive2:"${install_version}"
 	if [ $? -eq 0 ]; then
 		echo -e "${tty_green}clouddrive 容器已成功运行${tty_reset}"
 	else
@@ -170,6 +173,9 @@ default_value() {
 	mirror=${mirror:-https://mirro.ghproxy.com/}
 	user_install_path=${user_install_path:-/opt/clouddrive}
 	install_version=${install_version:-latest}
+	cloudnas_dir=${cloudnas_dir:-/CloudNAS}
+	config_dir=${config_dir:-/Config}
+	media_dir=${media_dir:-/Media}
 }
 
 # 下载二进制文件
@@ -221,7 +227,7 @@ download_clouddrive_binary() {
 	# remove temp
 	rm -f /tmp/clouddrive*
 	if [ ! -d "/CloudNAS" ]; then
-		mkdir "/CloudNAS"
+		mkdir -p "/CloudNAS"
 	fi
 }
 
@@ -494,7 +500,7 @@ install_mode() {
 		"1")
 			select_fast_mirror
 			select_version
-			select_path
+			select_binary_path
 			binary_install
 			break
 			;;
@@ -518,10 +524,8 @@ select_fast_mirror() {
   请选择加速通道：${tty_reset}" | sed 's/^\s\{2\}//'
 	echo -n "${tty_cyan}
     1、二进制下载加速（一）
-    2、二进制下载加速（二）
-    3、docker下载加速（一）
-    4、docker下载加速（二）
-    5、不加速 ${tty_reset}" | sed 's/^\s\{2\}//'
+    2、docker下载加速（一）
+    3、不加速 ${tty_reset}" | sed 's/^\s\{2\}//'
 	echo -n "${tty_yellow}
   请输入序号并回车: ${tty_reset}" | sed 's/^\s\{2\}//'
 	read FAST_NUM
@@ -530,10 +534,10 @@ select_fast_mirror() {
 		mirror="https://mirror.ghproxy.com/"
 		;;
 	"2")
-		mirror="https://mirror.ghproxy.com/"
+		mirror="dockerproxy.com/"
 		;;
 	"3")
-		mirror="dockerproxy.com/"
+		mirror=""
 		;;
 	*)
 		echo -n "${tty_red}
@@ -578,7 +582,7 @@ select_version() {
 }
 
 # 安装路径
-select_path() {
+select_binary_path() {
 	while true; do
 		echo -n "${tty_green}
     请选择安装的路径：${tty_reset}" | sed 's/^\s\{4\}//'
@@ -604,7 +608,58 @@ select_path() {
 			user_install_path=$(cd "$input_dir" && pwd)
 			# 如果用户输入的目录以斜杠结尾，则去掉结尾的斜杠
 			if [[ $input_dir == */ ]]; then
-				user_install_path=${absolute_path%/}
+				user_install_path=${user_install_path%/}
+			fi
+			break
+			;;
+		*)
+			echo -en "${tty_red}错误选项\r\n${tty_reset}"
+			;;
+		esac
+	done
+}
+
+select_docker_path() {
+	while true; do
+		echo -n "${tty_green}
+    请选择映射的路径：${tty_reset}" | sed 's/^\s\{4\}//'
+		echo -n "${tty_cyan}
+    1、默认路径
+    2、自定义路径 ${tty_reset}" | sed 's/^\s\{2\}//'
+		echo -n "${tty_yellow}
+    请输入序号并回车: ${tty_reset}" | sed 's/^\s\{4\}//'
+		read input_path
+		case "$input_path" in
+		1)
+			default_value
+			break
+			;;
+		2)
+			echo -en "\r\n${tty_green}请映射目录并回车\r\n${tty_reset}" | sed 's/^\s\{6\}//'
+			echo -n "${tty_yellow}容器中/CloudNAS映射到宿主机的目录：${tty_reset}" | sed 's/^\s\{6\}//'
+			read input_cloudnas_dir
+			mkdir -p "$input_cloudnas_dir"
+			echo -n "${tty_yellow}容器中/Config映射到宿主机的目录：${tty_reset}" | sed 's/^\s\{6\}//'
+			read input_config_dir
+			mkdir -p "$input_config_dir"
+			echo -n "${tty_yellow}容器中/Media映射到宿主机的目录：${tty_reset}" | sed 's/^\s\{6\}//'
+			read input_media_dir
+			mkdir -p "$input_media_dir"
+			# 获取目录的绝对路径
+			cloudnas_dir=$(cd "$input_cloudnas_dir" && pwd)
+			# 如果用户输入的目录以斜杠结尾，则去掉结尾的斜杠
+			if [[ $input_cloudnas_dir == */ ]]; then
+				cloudnas_dir=${cloudnas_dir%/}
+			fi
+
+			config_dir=$(cd "$input_config_dir" && pwd)
+			if [[ $input_config_dir == */ ]]; then
+				config_dir=${config_dir%/}
+			fi
+
+			media_dir=$(cd "$input_media_dir" && pwd)
+			if [[ $input_media_dir == */ ]]; then
+				media_dir=${media_dir%/}
 			fi
 			break
 			;;
