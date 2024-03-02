@@ -44,6 +44,8 @@
 - 以下命令2选1  
 
 ```shell
+# 新版(测试阶段)
+/bin/bash -c "$(curl -fsSL https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/dev/cd2.sh)"
 # 国内加速(推荐)
 curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/cd2.sh" | bash -s install mirror
 # 代理
