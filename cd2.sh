@@ -28,10 +28,12 @@ fi
 
 # 系统检查
 os_type=$(uname)
-if [[ "$os_type" == "Linux" ]] && command -v systemctl >/dev/null 2>&1; then
-	system_os="linux"
+if [[ "$os_type" == "Linux" ]] && command -v synopkg >/dev/null 2>&1; then
+	system_os="synology"
 elif [[ "$os_type" == "Linux" ]] && command -v opkg >/dev/null 2>&1; then
 	system_os="openwrt"
+elif [[ "$os_type" == "Linux" ]] && command -v systemctl >/dev/null 2>&1; then
+	system_os="linux"
 elif [[ "$os_type" == "Darwin" ]]; then
 	system_os="macos"
 else
@@ -68,19 +70,39 @@ esac
 # 一键快速安装
 fast_install() {
 	default_value
+	if [[ $system_os == "synology" ]] && command -v docker >/dev/null 2>&1; then
+		majorversion=$(grep -o 'majorversion="[0-9]*"' /etc.defaults/VERSION | cut -d'"' -f 2)
+		if [ "$majorversion" = "7" ]; then
+			docker_install
+		else
+			docker_install
+		fi
+	elif [[ $system_os == "synology" ]] && ! command -v docker >/dev/null 2>&1; then
+		majorversion=$(grep -o 'majorversion="[0-9]*"' /etc.defaults/VERSION | cut -d'"' -f 2)
+		if [ "$majorversion" = "7" ]; then
+			binary_install
+		else
+			echo -en "${tty_red}错误：群晖6.x及以下只支持docker安装${tty_reset}"
+			exit 1
+		fi
+	fi
+
 	if [[ $system_os == "openwrt" ]] && command -v docker >/dev/null 2>&1; then
 		docker_install
 	else
 		binary_install
 	fi
+
 	if [[ "$system_os" == "Linux" ]] && command -v docker >/dev/null 2>&1; then
 		docker_install
 	else
 		binary_install
 	fi
+
 	if [[ "$system_os" == "macos" ]] && command -v docker >/dev/null 2>&1; then
 		docker_install
 	else
+		echo -en "${tty_red}未识别到系统，尝试使用通用安装可能无法使用！${tty_reset}"
 		binary_install
 	fi
 }
@@ -89,13 +111,19 @@ fast_install() {
 binary_install() {
 	default_value
 	case $system_os in
-	"linux")
+	"openwrt")
 		download_clouddrive_binary
 		binary_install_fuse3
 		DAEMON
 		SUCCESS
 		;;
-	"openwrt")
+	"synology")
+		download_clouddrive_binary
+		binary_install_fuse3
+		DAEMON
+		SUCCESS
+		;;
+	"linux")
 		download_clouddrive_binary
 		binary_install_fuse3
 		DAEMON
@@ -109,7 +137,7 @@ binary_install() {
 		;;
 	*)
 		echo "
-      错误：您选择的序号不正确
+      错误：系统不正确
       "
 		;;
 	esac
@@ -128,6 +156,25 @@ docker_install() {
 			sed -i '/exit 0/i\mount --make-shared /' "/etc/rc.local"
 		fi
 		mount --make-shared /
+		run_clouddrive_docker
+		SUCCESS
+		;;
+	"synology")
+		if [ -f "/usr/local/etc/rc.d/clouddrive.sh" ]; then
+			rm -rf "/usr/local/etc/rc.d/clouddrive.sh"
+		fi
+		touch /usr/local/etc/rc.d/clouddrive.sh
+		cat >/usr/local/etc/rc.d/clouddrive.sh <<EOF
+#!/usr/bin/env sh
+mount --make-shared ${docker_volume_dir}
+EOF
+		chmod +x /usr/local/etc/rc.d/clouddrive.sh
+		mount --make-shared ${docker_volume_dir}
+		synoshare --add $(basename "$cloudnas_dir") "" ${cloudnas_dir} NA "" "" 1 0
+		if [ $? -ne 0 ]; then
+			echo -en "${tty_red}\r\n失败！您群晖 File Station 已存在同名的${cloudnas_dir_name}目录\r\n${tty_reset}"
+			exit 1
+		fi
 		run_clouddrive_docker
 		SUCCESS
 		;;
@@ -171,20 +218,25 @@ run_clouddrive_docker() {
 
 # 设置默认值
 default_value() {
-	mirror=${mirror:-https://mirro.ghproxy.com/}
+	mirror=${mirror:-https://mirror.ghproxy.com/}
 	docker_mirror=${docker_mirror:-}
 	user_install_path=${user_install_path:-/opt/clouddrive}
 	install_version=${install_version:-latest}
-	cloudnas_dir=${cloudnas_dir:-/CloudNAS}
-	config_dir=${config_dir:-/Config}
-	media_dir=${media_dir:-/Media}
+	if [[ "${system_os}" == "synology" ]]; then
+		docker_volume_dir="/volume1"
+	else
+		docker_volume_dir=""
+	fi
+	cloudnas_dir=${docker_volume_dir}${cloudnas_dir:-/CloudNAS}
+	config_dir=${docker_volume_dir}${config_dir:-/Config}
+	media_dir=${docker_volume_dir}${media_dir:-/Media}
 }
 
 # 下载二进制文件
 download_clouddrive_binary() {
 	# Download clouddrive2
 	case "$system_os" in
-	openwrt | linux)
+	synology | openwrt | linux)
 		os="linux"
 		;;
 	macos)
@@ -234,6 +286,13 @@ download_clouddrive_binary() {
 }
 
 binary_install_fuse3() {
+	if [[ "$system_os" == "synology" ]]; then
+		echo -e "\r\n${tty_green}下载 FUSE3 $fuse_version ...${tty_reset}"
+		curl -L ${mirror}https://raw.githubusercontent.com/sublaim/clouddrive2/dev/fuse3/fusermount3 \
+			-o /usr/bin/fusermount3 $CURL_BAR
+		chmod +777 /usr/bin/fusermount3
+	fi
+
 	if [[ "$system_os" == "openwrt" ]]; then
 		echo -e "\r\n${tty_green}更新软件源...${tty_reset}"
 		opkg update >/dev/null
@@ -299,7 +358,7 @@ binary_install_fuse3() {
 	fi
 }
 
-# 安装二进制文件并设置启动项
+# 安装二进制文件并设置启动
 DAEMON() {
 	case $system_os in
 	"openwrt")
@@ -324,7 +383,7 @@ EOF
 		/etc/init.d/clouddrive start
 		/etc/init.d/clouddrive enable
 		;;
-	"linux")
+	"synology" | "linux")
 		cat >/etc/systemd/system/clouddrive.service <<EOF
   [Unit]
   Description=clouddrive service
@@ -409,6 +468,10 @@ UNINSTALL() {
 		rm -rf "/opt/clouddrive"
 	fi
 
+	if [ -f "/usr/local/etc/rc.d/clouddrive.sh" ]; then
+		rm "/usr/local/etc/rc.d/clouddrive.sh"
+	fi
+
 	echo -e "\r\n${tty_green}clouddrive2 已在系统中移除！${tty_reset}\r\n"
 	exit 0
 }
@@ -477,25 +540,80 @@ get_public_ipv4() {
 
 public_ipv4=$(get_public_ipv4)
 
-# 这里有一个问题就是当没有docker时用户输入2的问题
 # 安装方式
+docker_mode() {
+	echo -n "${tty_green}
+  请选择安装方式：${tty_reset}" | retract_2
+	echo -n "${tty_cyan}
+    1、☟
+    2、docker ${tty_reset}" | retract_2
+}
+
+binary_mode() {
+	echo -n "${tty_green}
+  请选择安装方式：${tty_reset}" | retract_2
+	echo -n "${tty_cyan}
+    1、二进制${tty_reset}" | retract_2
+}
+
+binary_docker_mode() {
+	echo -n "${tty_green}
+  请选择安装方式：${tty_reset}" | retract_2
+	echo -n "${tty_cyan}
+    1、二进制
+    2、docker ${tty_reset}" | retract_2
+}
+
+# 缩进
+retract_2() {
+	sed 's/^\s\{2\}//'
+}
+
+retract_4() {
+	sed 's/^\s\{4\}//'
+}
+
+retract_6() {
+	sed 's/^\s\{6\}//'
+}
+
+check_synology_servion() {
+	if [ -f /etc.defaults/VERSION ]; then
+		majorversion=$(grep -o 'majorversion="[0-9]*"' /etc.defaults/VERSION | cut -d'"' -f 2)
+		if [ "$majorversion" = "7" ]; then
+			binary_docker_mode | retract_4
+		else
+			docker_mode | retract_4
+		fi
+	else
+		binary_docker_mode | retract_4
+	fi
+}
+
+check_synology_other_servion() {
+	if [ -f /etc.defaults/VERSION ]; then
+		majorversion=$(grep -o 'majorversion="[0-9]*"' /etc.defaults/VERSION | cut -d'"' -f 2)
+		if [ "$majorversion" != "7" ]; then
+			echo -en "${tty_red}\r\n群晖 6.x 仅支持通过docker安装。请安装 docker 后再运行\r\n${tty_reset}"
+			exit 1
+		else
+			binary_docker_mode | retract_4
+		fi
+	else
+		binary_mode | retract_4
+	fi
+}
+
 install_mode() {
 	if command -v docker >/dev/null 2>&1; then
-		echo -n "${tty_green}
-    请选择安装方式：${tty_reset}" | sed 's/^\s\{4\}//'
-		echo -n "${tty_cyan}
-      1、二进制
-      2、docker ${tty_reset}" | sed 's/^\s\{4\}//'
+		check_synology_servion
 	else
-		echo -n "${tty_green}
-    请选择安装方式：${tty_reset}" | sed 's/^\s\{2\}//'
-		echo -n "${tty_cyan}
-      1、二进制 ${tty_reset}" | sed 's/^\s\{2\}//'
+		check_synology_other_servion
 	fi
 
 	while true; do
 		echo -n "
-    ${tty_yellow}请输入序号: ${tty_reset}" | sed 's/^\s\{4\}//'
+    ${tty_yellow}请输入序号: ${tty_reset}" | retract_4
 		read MODE_NUM
 		echo "${tty_reset}"
 		case $MODE_NUM in
@@ -523,12 +641,12 @@ install_mode() {
 # 镜像加速
 select_fast_mirror() {
 	echo -n "${tty_green}
-  请选择加速通道：${tty_reset}" | sed 's/^\s\{2\}//'
+  请选择加速通道：${tty_reset}" | retract_2
 	echo -n "${tty_cyan}
     1、加速
-    2、不加速 ${tty_reset}" | sed 's/^\s\{2\}//'
+    2、不加速 ${tty_reset}" | retract_2
 	echo -n "${tty_yellow}
-  请输入序号并回车: ${tty_reset}" | sed 's/^\s\{2\}//'
+  请输入序号并回车: ${tty_reset}" | retract_2
 	read FAST_NUM
 	case $FAST_NUM in
 	"1")
@@ -551,12 +669,12 @@ select_fast_mirror() {
 select_version() {
 	while true; do
 		echo -n "${tty_green}
-    请选择安装的版本：${tty_reset}" | sed 's/^\s\{4\}//'
+    请选择安装的版本：${tty_reset}" | retract_4
 		echo -n "${tty_cyan}
-    1、最新版
-    2、旧版本 ${tty_reset}" | sed 's/^\s\{2\}//'
+      1、最新版
+      2、旧版本 ${tty_reset}" | retract_4
 		echo -n "${tty_yellow}
-    请输入序号并回车: ${tty_reset}" | sed 's/^\s\{4\}//'
+    请输入序号并回车: ${tty_reset}" | retract_4
 		read input_version
 		case "$input_version" in
 		1)
@@ -564,8 +682,8 @@ select_version() {
 			break
 			;;
 		2)
-			echo -en "\r\n${tty_green}请输入版本号并回车,如：0.6.6\r\n${tty_reset}" | sed 's/^\s\{6\}//'
-			echo -n "${tty_yellow}版本号：${tty_reset}" | sed 's/^\s\{6\}//'
+			echo -en "\r\n${tty_green}请输入版本号并回车,如：0.6.6\r\n${tty_reset}" | retract_6
+			echo -n "${tty_yellow}版本号：${tty_reset}" | retract_6
 			read old_version
 			if ! [[ $old_version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 				echo -n "${tty_red}版本号格式不正确！${tty_reset}"
@@ -585,12 +703,12 @@ select_version() {
 select_binary_path() {
 	while true; do
 		echo -n "${tty_green}
-    请选择安装的路径：${tty_reset}" | sed 's/^\s\{4\}//'
+    请选择安装的路径：${tty_reset}" | retract_4
 		echo -n "${tty_cyan}
-    1、默认路径
-    2、自定义路径 ${tty_reset}" | sed 's/^\s\{2\}//'
+      1、默认路径
+      2、自定义路径${tty_reset}" | retract_4
 		echo -n "${tty_yellow}
-    请输入序号并回车: ${tty_reset}" | sed 's/^\s\{4\}//'
+    请输入序号并回车: ${tty_reset}" | retract_4
 		read input_path
 		case "$input_path" in
 		1)
@@ -600,12 +718,11 @@ select_binary_path() {
 			break
 			;;
 		2)
-			echo -en "\r\n${tty_green}请输入安装路径并回车，如：/opt/clouddrive\r\n${tty_reset}" | sed 's/^\s\{6\}//'
-			echo -n "${tty_yellow}路径：${tty_reset}" | sed 's/^\s\{6\}//'
+			echo -en "\r\n${tty_green}请输入安装路径并回车，如：/opt/clouddrive\r\n${tty_reset}" | retract_6
+			echo -n "${tty_yellow}路径：${tty_reset}" | retract_6
 			read input_dir
 			# 获取目录的绝对路径
-			mkdir -p "$input_dir"
-			user_install_path=$(cd "$input_dir" && pwd)
+			user_install_path=$(readlink -f "$input_dir")
 			# 如果用户输入的目录以斜杠结尾，则去掉结尾的斜杠
 			if [[ $input_dir == */ ]]; then
 				user_install_path=${user_install_path%/}
@@ -622,12 +739,12 @@ select_binary_path() {
 select_docker_path() {
 	while true; do
 		echo -n "${tty_green}
-    请选择映射的路径：${tty_reset}" | sed 's/^\s\{4\}//'
+    请选择映射的路径(群晖请忽略/volumes1)：${tty_reset}" | retract_4
 		echo -n "${tty_cyan}
-    1、默认路径
-    2、自定义路径 ${tty_reset}" | sed 's/^\s\{2\}//'
+      1、默认路径
+      2、自定义路径 ${tty_reset}" | retract_4
 		echo -n "${tty_yellow}
-    请输入序号并回车: ${tty_reset}" | sed 's/^\s\{4\}//'
+    请输入序号并回车: ${tty_reset}" | retract_4
 		read input_path
 		case "$input_path" in
 		1)
@@ -635,32 +752,30 @@ select_docker_path() {
 			break
 			;;
 		2)
-			echo -en "\r\n${tty_green}请映射目录并回车\r\n${tty_reset}" | sed 's/^\s\{6\}//'
-			echo -n "${tty_yellow}容器中/CloudNAS映射到宿主机的目录：${tty_reset}" | sed 's/^\s\{6\}//'
+			echo -en "\r\n${tty_green}请映射目录并回车\r\n${tty_reset}" | retract_6
+			echo -n "${tty_yellow}容器中/CloudNAS映射到宿主机的目录：${tty_reset}" | retract_6
 			read input_cloudnas_dir
-			mkdir -p "$input_cloudnas_dir"
-			echo -n "${tty_yellow}容器中/Config映射到宿主机的目录：${tty_reset}" | sed 's/^\s\{6\}//'
+			echo -n "${tty_yellow}容器中/Config映射到宿主机的目录：${tty_reset}" | retract_6
 			read input_config_dir
-			mkdir -p "$input_config_dir"
-			echo -n "${tty_yellow}容器中/Media映射到宿主机的目录：${tty_reset}" | sed 's/^\s\{6\}//'
+			echo -n "${tty_yellow}容器中/Media映射到宿主机的目录：${tty_reset}" | retract_6
 			read input_media_dir
-			mkdir -p "$input_media_dir"
 			# 获取目录的绝对路径
-			cloudnas_dir=$(cd "$input_cloudnas_dir" && pwd)
+			cloudnas_dir=$(readlink -f "$input_cloudnas_dir")
 			# 如果用户输入的目录以斜杠结尾，则去掉结尾的斜杠
 			if [[ $input_cloudnas_dir == */ ]]; then
 				cloudnas_dir=${cloudnas_dir%/}
 			fi
 
-			config_dir=$(cd "$input_config_dir" && pwd)
+			config_dir=$(readlink -f "$input_config_dir")
 			if [[ $input_config_dir == */ ]]; then
 				config_dir=${config_dir%/}
 			fi
 
-			media_dir=$(cd "$input_media_dir" && pwd)
+			media_dir=$(readlink -f "$input_media_dir")
 			if [[ $input_media_dir == */ ]]; then
 				media_dir=${media_dir%/}
 			fi
+			default_value
 			break
 			;;
 		*)
@@ -675,10 +790,10 @@ while true; do
 	echo -n "${tty_cyan}
     1、快速安装  （一键安装）
     2、自定义安装（可选安装路径、方式等）
-    3、卸载 ${tty_reset}" | sed 's/^\s\{2\}//'
+    3、卸载 ${tty_reset}" | retract_2
 
 	echo -n "
-  ${tty_yellow}请输入序号并回车: ${tty_reset}" | sed 's/^\s\{2\}//'
+  ${tty_yellow}请输入序号并回车: ${tty_reset}" | retract_2
 	read INSTALL_NUM
 	echo "${tty_reset}"
 	case $INSTALL_NUM in
