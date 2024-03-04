@@ -1,15 +1,14 @@
 # 一键安装 Clouddrive2 脚本
 脚本非官方出品。指在帮助纯新手用户快速使用 clouddrive2 挂载网盘。  
-脚本中使用的docker镜像与二进制文件均从官方 hub 及 github 仓库下载，请放心使用。
+脚本中使用的docker镜像与二进制文件均从官方 hub 及 github 仓库下载，请放心使用。  
+由于 CloudDrive 非开源软件，尽管此脚本是开源的，但不对CloudDrive 提供的软件内容和服务做出任何保证。风险由使用者自行承担。
+
 
 ## 目录
 - [一键安装 Clouddrive2 脚本](#一键安装-clouddrive2-脚本)
   - [目录](#目录)
   - [安装](#安装)
     - [安装命令](#安装命令)
-  - [一键开启 SMB 与 NFS 共享](#一键开启-smb-与-nfs-共享)
-    - [共享](#共享)
-    - [还原共享](#还原共享)
   - [如何更新?](#如何更新)
   - [在哪运行？](#在哪运行)
     - [OpenWRT](#openwrt)
@@ -27,6 +26,7 @@
 - [X] MacOS
 - [X] OpenWRT(iStore)
 - [X] Android-Termux
+- [X] 群晖6-7
 
 ## 安装
 ### 安装命令
@@ -41,31 +41,6 @@
 # 代理
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/sublaim/clouddrive2/dev/cd2.sh)"
 ```
-
-## 一键开启 SMB 与 NFS 共享
-- **前提是使用一键安装脚本安装的 cd2 且网盘挂载目录为/CloudNAS**  
-- 官方自带了 webdav 的方式 [点击查看](#安装后问题)  
-- 只支持 Openwrt 系列及其衍生版, 大部分设备可以开启 SMB, NFS能不能开启看固件  
-- GL.iNET 设备需要提前在主路由界面 -> 应用程序 -> 网络共享或文件共享 -> 开启 samba  
-
-### 共享
-- 以下命令2选1  
-```shell
-# 国内加速(推荐)
-curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
-# 代理
-curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s shares
-```
-
-### 还原共享
-- 以下命令2选1  
-```shell
-# 国内加速(推荐)
-curl -fsSL "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
-# 代理
-curl -fsSL "https://raw.githubusercontent.com/sublaim/clouddrive2/main/shares.sh" | bash -s unshares
-```
-
 
 ## 如何更新?
 请使用官方内置的更新方式: 点击右上角的`!`号
@@ -133,6 +108,11 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 **curl: (35) Recv failure: Connection reset by peer**  
 > *重启「终端」*  
 
+**失败！您群晖 File Station 已存在同名的目录**  
+> *在「控制面板」-> 「共享文件夹」处理同名的目录*  
+
+群晖7套件中的 docker 改名为：Container Manager，请安装这个。
+
 **一直卡在 正在下载 clouddrive 镜像，请稍候...**  
 尝试以下方式解决:  
 > *1. 关闭代理包括手机上*  
@@ -148,8 +128,6 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 **出错了, 请先把cd2中的网盘挂载到本地/CloudNAS目录**  
 > *在cd2后台挂载你的网盘到本地*  
 
-**IO error fusemount run failed**  
-> *ls /dev/fuse | grep fuse 如果没有没输出则是缺少fuse模块*  
 
 **Mac为什么只能读不能写入文件?**
 > *挂载到本地时把默认的0755改成0777*
