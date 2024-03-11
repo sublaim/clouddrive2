@@ -109,7 +109,7 @@ Linux 桌面环境下的「终端」名称不同, 可自行查找
 > *重启「终端」*  
 
 **失败！您群晖 File Station 已存在同名的目录**  
-> *在「控制面板」-> 「共享文件夹」处理同名的目录（重命名或删除），若不存在同名的目录ssh登录执行 (sudo) rm -rf /volumes1/CloudNAS*  
+> *在「控制面板」-> 「共享文件夹」处理同名的目录（重命名或删除），若不存在同名的目录ssh登录执行 (sudo) rm -rf /volume1/CloudNAS*  
 
 群晖7套件中的 docker 改名为：Container Manager，请安装这个。
 
