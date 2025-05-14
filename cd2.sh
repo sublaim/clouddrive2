@@ -218,7 +218,7 @@ run_clouddrive_docker() {
 
 # 设置默认值
 default_value() {
-  mirror=${mirror:-https://ghproxy.net/}
+  mirror=${mirror:-https://ghfast.top/}
   docker_mirror=${docker_mirror:-}
   user_install_path=${user_install_path:-/opt/clouddrive}
   install_version=${install_version:-latest}
@@ -651,7 +651,7 @@ select_fast_mirror() {
   read FAST_NUM
   case $FAST_NUM in
   "1")
-    mirror="https://ghproxy.net/"
+    mirror="https://ghfast.top/"
     docker_mirror="dockerproxy.net/"
     ;;
   "2")
